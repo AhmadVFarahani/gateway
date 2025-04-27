@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "dvaGmPtHPMDXSUHY9Tr018SPUjxmbXZipV3ZYnmcbV4=",
+  "Source": "Gateway.Admin.Api",
+  "BasePath": "_content/Gateway.Admin.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

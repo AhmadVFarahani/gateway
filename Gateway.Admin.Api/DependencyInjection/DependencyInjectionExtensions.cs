@@ -14,10 +14,12 @@ public static class DependencyInjectionExtensions
         // Application Services
         services.AddScoped<IServiceService, ServiceService>();
         services.AddScoped<IRouteService, RouteService>();
+        services.AddScoped<IUserService, UserService>();
 
         // Repositories
         services.AddScoped<IServiceRepository, ServiceRepository>();
         services.AddScoped<IRouteRepository, RouteRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         // AutoMapper
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -1,13 +1,12 @@
-﻿namespace Gateway.Domain.Enumsک
+﻿namespace Gateway.Domain.Enums;
+
+public enum HttpMethodEnum
 {
-    public enum HttpMethodEnum
-    {
-        GET = 1,
-        POST = 2,
-        PUT = 3,
-        DELETE = 4,
-        PATCH = 5,
-        HEAD = 6,
-        OPTIONS = 7
-    }
+    GET = 1,
+    POST = 2,
+    PUT = 3,
+    DELETE = 4,
+    PATCH = 5,
+    HEAD = 6,
+    OPTIONS = 7
 }

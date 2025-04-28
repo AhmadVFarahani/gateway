@@ -1,5 +1,5 @@
 ﻿using Gateway.Application.Base;
-using Gateway.Domain.Enumsک;
+using Gateway.Domain.Enums;
 
 namespace Gateway.Application.Routes.Dtos;
 

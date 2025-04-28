@@ -13,6 +13,8 @@ public class GatewayDbContext : DbContext
 
     public DbSet<Service> Services { get; set; }
     public DbSet<Route> Routes { get; set; }
+    public DbSet<User> Users { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -21,5 +23,6 @@ public class GatewayDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new ServiceConfiguration());
         modelBuilder.ApplyConfiguration(new RouteConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 }

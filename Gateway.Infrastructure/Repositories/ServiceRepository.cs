@@ -4,7 +4,6 @@ using Gateway.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Infrastructure.Repositories;
-
 public class ServiceRepository : IServiceRepository
 {
     private readonly GatewayDbContext _context;

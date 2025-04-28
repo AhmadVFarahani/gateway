@@ -1,4 +1,4 @@
-﻿namespace Gateway.Application.Services.Dtos
+﻿namespace Gateway.Application.Base
 {
     public abstract class BaseDto
     {

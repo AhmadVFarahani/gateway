@@ -1,4 +1,6 @@
-﻿namespace Gateway.Application.Services.Dtos;
+﻿using Gateway.Application.Base;
+
+namespace Gateway.Application.Services.Dtos;
 
 public class ServiceDto:BaseDto
 {

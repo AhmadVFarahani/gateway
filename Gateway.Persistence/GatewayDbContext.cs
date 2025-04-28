@@ -14,6 +14,7 @@ public class GatewayDbContext : DbContext
     public DbSet<Service> Services { get; set; }
     public DbSet<Route> Routes { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<ApiKey> ApiKeys { get; set; }
 
 
 
@@ -24,5 +25,6 @@ public class GatewayDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ServiceConfiguration());
         modelBuilder.ApplyConfiguration(new RouteConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new ApiKeyConfiguration());
     }
 }

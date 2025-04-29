@@ -15,7 +15,7 @@ public class GatewayDbContext : DbContext
     public DbSet<Route> Routes { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<ApiKey> ApiKeys { get; set; }
-
+    public DbSet<Scope> Scopes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,5 +26,6 @@ public class GatewayDbContext : DbContext
         modelBuilder.ApplyConfiguration(new RouteConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new ApiKeyConfiguration());
+        modelBuilder.ApplyConfiguration(new ScopeConfiguration());
     }
 }

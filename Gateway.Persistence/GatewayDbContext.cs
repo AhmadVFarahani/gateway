@@ -18,6 +18,7 @@ public class GatewayDbContext : DbContext
     public DbSet<Scope> Scopes { get; set; }
     public DbSet<AccessPolicy> AccessPolicies { get; set; }
     public DbSet<RouteScope> RouteScopes { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
 
@@ -32,5 +33,6 @@ public class GatewayDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ScopeConfiguration());
         modelBuilder.ApplyConfiguration(new AccessPolicyConfiguration());
         modelBuilder.ApplyConfiguration(new RouteConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 }

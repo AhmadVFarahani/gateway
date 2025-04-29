@@ -1,6 +1,6 @@
 ﻿namespace Gateway.Domain.Entities;
 
-public class AccessPolicy:BaseEntity
+public class RefreshToken:BaseEntity
 {
 
     public long? UserId { get; set; }
@@ -9,8 +9,7 @@ public class AccessPolicy:BaseEntity
     public long? ApiKeyId { get; set; }
     public ApiKey? ApiKey { get; set; }
 
-    public long ScopeId { get; set; }
-    public Scope Scope { get; set; } = null!;
-
-    public bool IsActive { get; set; } = true;
+    public string Token { get; set; } = string.Empty;
+    public DateTime ExpirationDate { get; set; }
+    public bool IsRevoked { get; set; } = false;
 }

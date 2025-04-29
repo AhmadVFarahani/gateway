@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gateway.Persistence;
+namespace Gateway.Persistence.Configurations;
 
 public class AccessPolicyConfiguration : IEntityTypeConfiguration<AccessPolicy>
 {

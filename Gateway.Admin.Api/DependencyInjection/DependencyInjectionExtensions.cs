@@ -20,6 +20,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IScopeService, ScopeService>();
         services.AddScoped<IAccessPolicyService, AccessPolicyService>();
         services.AddScoped<IRouteScopeService, RouteScopeService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
         // Repositories
         services.AddScoped<IServiceRepository, ServiceRepository>();
@@ -29,6 +30,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IScopeRepository, ScopeRepository>();
         services.AddScoped<IAccessPolicyRepository, AccessPolicyRepository>();
         services.AddScoped<IRouteScopeRepository, RouteScopeRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         // AutoMapper
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

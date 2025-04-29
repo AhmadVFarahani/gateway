@@ -16,6 +16,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IRouteService, RouteService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IApiKeyService, ApiKeyService>();
+        services.AddScoped<IJwtService, JwtService>();
 
         // Repositories
         services.AddScoped<IServiceRepository, ServiceRepository>();

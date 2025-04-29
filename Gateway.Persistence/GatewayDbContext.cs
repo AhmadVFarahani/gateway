@@ -16,6 +16,7 @@ public class GatewayDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<ApiKey> ApiKeys { get; set; }
     public DbSet<Scope> Scopes { get; set; }
+    public DbSet<AccessPolicy> AccessPolicies { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,5 +28,6 @@ public class GatewayDbContext : DbContext
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new ApiKeyConfiguration());
         modelBuilder.ApplyConfiguration(new ScopeConfiguration());
+        modelBuilder.ApplyConfiguration(new AccessPolicyConfiguration());
     }
 }

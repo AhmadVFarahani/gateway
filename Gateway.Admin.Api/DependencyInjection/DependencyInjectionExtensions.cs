@@ -18,6 +18,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IApiKeyService, ApiKeyService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IScopeService, ScopeService>();
+        services.AddScoped<IAccessPolicyService, AccessPolicyService>();
 
         // Repositories
         services.AddScoped<IServiceRepository, ServiceRepository>();
@@ -25,6 +26,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
         services.AddScoped<IScopeRepository, ScopeRepository>();
+        services.AddScoped<IAccessPolicyRepository, AccessPolicyRepository>();
 
         // AutoMapper
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

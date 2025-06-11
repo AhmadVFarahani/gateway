@@ -8,4 +8,5 @@ public interface IRouteScopeRepository
     Task AddAsync(RouteScope routeScope);
     Task DeleteAsync(RouteScope routeScope);
     Task<RouteScope?> GetByIdAsync(long id);
+    Task<IEnumerable<RouteScope>> GetByRouteIdAsync(long routeId);
 }

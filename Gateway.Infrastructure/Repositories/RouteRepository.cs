@@ -40,4 +40,9 @@ public class RouteRepository : IRouteRepository
         _context.Routes.Remove(route);
         await _context.SaveChangesAsync();
     }
+    public async Task<Route?> GetByPathAsync(string path)
+    {
+        return await _context.Routes
+            .FirstOrDefaultAsync(r => r.Path.ToLower() == path.ToLower());
+    }
 }

@@ -35,4 +35,10 @@ public class RouteScopeRepository : IRouteScopeRepository
     {
         return await _context.RouteScopes.FindAsync(id);
     }
+    public async Task<IEnumerable<RouteScope>> GetByRouteIdAsync(long routeId)
+    {
+        return await _context.RouteScopes
+            .Where(rs => rs.RouteId == routeId)
+            .ToListAsync();
+    }
 }

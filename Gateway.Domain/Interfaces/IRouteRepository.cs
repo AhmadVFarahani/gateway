@@ -9,4 +9,5 @@ public interface IRouteRepository
     Task AddAsync(Route route);
     Task UpdateAsync(Route route);
     Task DeleteAsync(Route route);
+    Task<Route?> GetByPathAsync(string path);
 }

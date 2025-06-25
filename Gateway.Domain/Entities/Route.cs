@@ -12,4 +12,6 @@ public class Route:BaseEntity
     public bool IsActive { get; set; } = true;
   
     public Service? Service { get; set; }
+    public ICollection<RouteRequestField> RequestFields { get; set; } = new List<RouteRequestField>();
+
 }

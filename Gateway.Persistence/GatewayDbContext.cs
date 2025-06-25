@@ -3,6 +3,8 @@ using Gateway.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Persistence;
+//dotnet ef migrations add  --startup-project Gateway.Admin.API --project Gateway.Persistence
+//dotnet ef database update --startup-project Gateway.Admin.API --project Gateway.Persistence
 
 public class GatewayDbContext : DbContext
 {
@@ -21,6 +23,8 @@ public class GatewayDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<RouteRequestField> RouteRequestFields{ get; set; }
     public DbSet<RouteResponseField> RouteResponseFields{ get; set; }
+    public DbSet<Company> Companies{ get; set; }
+    public DbSet<Role> Roles{ get; set; }
 
 
 
@@ -38,5 +42,7 @@ public class GatewayDbContext : DbContext
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
         modelBuilder.ApplyConfiguration(new RouteRequestFieldConfiguration());
         modelBuilder.ApplyConfiguration(new RouteResponseFieldConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new CompanyConfiguration());
     }
 }

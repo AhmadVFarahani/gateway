@@ -23,5 +23,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.IsActive)
             .IsRequired();
+
+        builder.HasOne(x => x.Company)
+           .WithMany(c=>c.Users)
+           .HasForeignKey(x => x.CompanyId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Role)
+          .WithMany(c=>c.Users)
+          .HasForeignKey(x => x.RoleId)
+          .OnDelete(DeleteBehavior.Cascade);
     }
 }

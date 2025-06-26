@@ -40,6 +40,9 @@ public class UserService : IUserService
             UserName = request.UserName,
             PasswordHash = passwordHash,
             UserType = request.UserType,
+            CompanyId = request.CompanyId,
+            RoleId = request.RoleId,
+            CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
 
@@ -55,6 +58,10 @@ public class UserService : IUserService
         user.UserName = request.UserName;
         user.UserType = request.UserType;
         user.IsActive = request.IsActive;
+        user.CompanyId= request.CompanyId;
+        user.RoleId = request.RoleId;
+        
+        
         user.UpdatedAt = DateTime.UtcNow;
 
         await _repository.UpdateAsync(user);

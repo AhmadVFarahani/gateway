@@ -2,7 +2,7 @@
 
 public enum UserType
 {
-    Admin = 1,
-    Development = 2
+    Individual = 0,
+    Application = 1
 
 }

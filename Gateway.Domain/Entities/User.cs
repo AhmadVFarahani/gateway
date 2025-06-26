@@ -8,7 +8,7 @@ public class User:BaseEntity
     public string UserName { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
-    public UserType UserType { get; set; } = UserType.Admin;
+    public UserType UserType { get; set; } = UserType.Individual;
 
   
     public long CompanyId { get; set; }

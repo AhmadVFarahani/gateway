@@ -18,6 +18,12 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetAll() =>
         Ok(await _service.GetAllAsync());
 
+
+    [HttpGet("byCompany")]
+    public async Task<IActionResult> GetByCompanyId([FromQuery] long companyId)
+    {
+        return Ok( await _service.GetByCompanyId(companyId));
+    }
     [HttpGet("{id:long}")]
     public async Task<IActionResult> GetById(long id)
     {

@@ -31,6 +31,12 @@ public class UserService : IUserService
         return _mapper.Map<IEnumerable<UserDto>>(users);
     }
 
+    public async Task<IEnumerable<UserDto>> GetByCompanyId(long companyId)
+    {
+        var users = await _repository.GetByCompanyId(companyId);
+        return _mapper.Map<IEnumerable<UserDto>>(users);
+    }
+
     public async Task<long> CreateAsync(CreateUserRequest request)
     {
         var passwordHash = HashPassword(request.Password);

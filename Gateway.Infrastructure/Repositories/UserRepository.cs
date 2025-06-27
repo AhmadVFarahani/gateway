@@ -24,6 +24,11 @@ public class UserRepository : IUserRepository
         return await _context.Users.Include(c => c.Company).Include(c => c.Role).ToListAsync();
     }
 
+    public async Task<IEnumerable<User>> GetByCompanyId(long companyId)
+    {
+        return await _context.Users.Include(c => c.Company).Include(c => c.Role).Where(c=>c.CompanyId==companyId).ToListAsync();
+    }
+
     public async Task AddAsync(User user)
     {
         _context.Users.Add(user);

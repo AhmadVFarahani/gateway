@@ -34,15 +34,19 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 
-app.UseCors("AllowLocalhost3000");
+//app.UseCors("AllowLocalhost3000");
 
+app.UseCors(x => x.AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .SetIsOriginAllowed(origin => true)
+                   .AllowCredentials());
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseAuthorization();
 

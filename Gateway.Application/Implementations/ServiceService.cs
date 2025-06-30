@@ -34,7 +34,9 @@ public class ServiceService : IServiceService
         var service = new Service
         {
             Name = request.Name,
-            BaseUrl = request.BaseUrl
+            BaseUrl = request.BaseUrl,
+            Description = request.Description,
+            IsActive = true,
         };
 
         await _repository.AddAsync(service);
@@ -49,6 +51,7 @@ public class ServiceService : IServiceService
         service.Name = request.Name;
         service.BaseUrl = request.BaseUrl;
         service.IsActive = request.IsActive;
+        service.Description= request.Description;
         service.UpdatedAt = DateTime.UtcNow;
 
         await _repository.UpdateAsync(service);

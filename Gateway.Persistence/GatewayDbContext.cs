@@ -24,7 +24,13 @@ public class GatewayDbContext : DbContext
     public DbSet<RouteRequestField> RouteRequestFields{ get; set; }
     public DbSet<RouteResponseField> RouteResponseFields{ get; set; }
     public DbSet<Company> Companies{ get; set; }
-    public DbSet<Role> Roles{ get; set; }
+    public DbSet<Role> Roles { get; set; }
+
+    public DbSet<Plan> Plans { get; set; }
+    public DbSet<PlanRoute> PlanRoutes { get; set; }
+    public DbSet<CompanyPlan> CompanyPlans { get; set; }
+    public DbSet<CompanyRoutePricing> CompanyRoutePricing { get; set; }
+
 
 
 
@@ -44,5 +50,11 @@ public class GatewayDbContext : DbContext
         modelBuilder.ApplyConfiguration(new RouteResponseFieldConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new CompanyConfiguration());
+
+        modelBuilder.ApplyConfiguration(new PlanConfiguration());
+        modelBuilder.ApplyConfiguration(new PlanRouteConfiguration());
+        modelBuilder.ApplyConfiguration(new CompanyPlanConfiguration());
+        modelBuilder.ApplyConfiguration(new CompanyRoutePricingConfiguration());
+
     }
 }

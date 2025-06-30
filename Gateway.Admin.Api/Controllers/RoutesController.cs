@@ -20,6 +20,12 @@ namespace Gateway.Admin.Api.Controllers
         public async Task<IActionResult> GetAll() =>
             Ok(await _service.GetAllAsync());
 
+        [HttpGet("byService")]
+        public async Task<IActionResult> GetByServiceId([FromQuery] long serviceId)
+        {
+            return Ok(await _service.GetByServiceId(serviceId));
+        }
+
         [HttpGet("{id:long}")]
         public async Task<IActionResult> GetById(long id)
         {

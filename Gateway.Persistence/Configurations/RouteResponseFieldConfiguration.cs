@@ -14,10 +14,11 @@ public class RouteResponseFieldConfiguration : IEntityTypeConfiguration<RouteRes
         builder.Property(x => x.Type).HasMaxLength(100);
         builder.Property(x => x.Description).HasMaxLength(1000);
 
+        // Route relation
         builder.HasOne(x => x.Route)
-               .WithMany()
-               .HasForeignKey(x => x.RouteId)
-               .OnDelete(DeleteBehavior.Cascade);
+            .WithMany(x => x.ResponseFields)
+            .HasForeignKey(x => x.RouteId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Parent)
                .WithMany(x => x.Children)

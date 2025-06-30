@@ -3,7 +3,7 @@ using Gateway.Domain.Enums;
 
 namespace Gateway.Application.Routes.Dtos;
 
-public class CreateRouteRequest:BaseDto
+public class CreateRouteRequest
 {
     public string Path { get; set; } = string.Empty;
     public HttpMethodEnum HttpMethod { get; set; }

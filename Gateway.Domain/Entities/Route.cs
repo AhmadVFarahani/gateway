@@ -13,5 +13,8 @@ public class Route:BaseEntity
   
     public Service? Service { get; set; }
     public ICollection<RouteRequestField> RequestFields { get; set; } = new List<RouteRequestField>();
+    public ICollection<RouteResponseField> ResponseFields { get; set; } = new List<RouteResponseField>();
+
+    public ICollection<PlanRoute> PlanRoutes { get; set; } = new List<PlanRoute>();
 
 }

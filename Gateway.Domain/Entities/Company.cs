@@ -11,4 +11,5 @@ public class Company:BaseEntity
 
     // Navigation
     public ICollection<User> Users { get; set; } = new List<User>();
+    public ICollection<CompanyPlan> CompanyPlans { get; set; } = new List<CompanyPlan>();
 }

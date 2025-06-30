@@ -6,6 +6,7 @@ public interface IRouteService
 {
     Task<RouteDto?> GetByIdAsync(long id);
     Task<IEnumerable<RouteDto>> GetAllAsync();
+    Task<IEnumerable<RouteDto>> GetByServiceId(long serviceId);
     Task<long> CreateAsync(CreateRouteRequest request);
     Task UpdateAsync(long id, UpdateRouteRequest request);
     Task DeleteAsync(long id);

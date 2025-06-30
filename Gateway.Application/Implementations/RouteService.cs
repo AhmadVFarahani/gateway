@@ -28,6 +28,11 @@ public class RouteService : IRouteService
         var routes = await _repository.GetAllAsync();
         return _mapper.Map<IEnumerable<RouteDto>>(routes);
     }
+    public async Task<IEnumerable<RouteDto>> GetByServiceId(long serviceId)
+    {
+        var routes = await _repository.GetByServiceId(serviceId);
+        return _mapper.Map<IEnumerable<RouteDto>>(routes);
+    }
 
     public async Task<long> CreateAsync(CreateRouteRequest request)
     {

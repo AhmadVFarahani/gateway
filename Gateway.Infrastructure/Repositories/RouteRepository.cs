@@ -23,6 +23,11 @@ public class RouteRepository : IRouteRepository
         return await _context.Routes.ToListAsync();
     }
 
+    public async Task<IEnumerable<Route>> GetByServiceId(long serviceId)
+    {
+        return await _context.Routes.Where(c=>c.ServiceId==serviceId).ToListAsync();
+    }
+
     public async Task AddAsync(Route route)
     {
         _context.Routes.Add(route);

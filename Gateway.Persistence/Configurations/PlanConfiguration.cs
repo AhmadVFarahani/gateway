@@ -4,22 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Persistence.Configurations;
 
-public class RoleConfiguration : IEntityTypeConfiguration<Role>
-{
-    public void Configure(EntityTypeBuilder<Role> builder)
-    {
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.Name)
-            .IsRequired()
-            .HasMaxLength(30);
-
-        builder.Property(x => x.Description)
-            .IsRequired(false)
-            .HasMaxLength(200);
-    }
-}
-
 public class PlanConfiguration : IEntityTypeConfiguration<Plan>
 {
     public void Configure(EntityTypeBuilder<Plan> builder)

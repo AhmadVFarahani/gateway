@@ -6,7 +6,7 @@ namespace Gateway.Admin.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlanController : ControllerBase
+public  class PlanController : ControllerBase
 {
     private readonly IPlanService _service;
 

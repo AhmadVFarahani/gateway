@@ -1,4 +1,6 @@
-﻿namespace Gateway.Application.Plan.Dtos;
+﻿using Gateway.Application.Routes.Dtos;
+
+namespace Gateway.Application.Plan.Dtos;
 
 public class CreatePlanRequest
 {

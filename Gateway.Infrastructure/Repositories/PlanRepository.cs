@@ -15,7 +15,7 @@ public class PlanRepository : IPlanRepository
     }
 
     public async Task<Plan?> GetByIdAsync(long id) =>
-        await _context.Plans.FindAsync(id);
+        await _context.Plans.Include(c => c.PlanRoutes).FirstOrDefaultAsync(c => c.Id == id);
 
     public async Task<IEnumerable<Plan>> GetAllAsync() =>
         await _context.Plans.ToListAsync();
@@ -37,4 +37,24 @@ public class PlanRepository : IPlanRepository
         _context.Plans.Remove(plan);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<PlanRoute>> GetPlanRouteByPlanId(long planId)
+    {
+        return await _context.PlanRoutes
+                      .Where(pr => pr.PlanId == planId)
+                      .ToListAsync();
+    }
+
+    public async Task<IEnumerable<PlanRoute>> GetPlanRouteByRouteId(long routeId)
+    {
+        return await _context.PlanRoutes
+                       .Where(pr => pr.RouteId == routeId)
+                       .ToListAsync();
+    }
+
+    Task<PlanRoute?> IPlanRepository.GetPlanRouteByIdAsync(long id)
+    {
+        throw new NotImplementedException();
+    }
+
 }

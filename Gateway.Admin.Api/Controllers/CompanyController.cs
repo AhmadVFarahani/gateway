@@ -31,7 +31,7 @@ public class CompanyController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateCompanyRequest request)
     {
         var id = await _service.CreateAsync(request);
-        return CreatedAtAction(nameof(GetById), new { id }, new {id});
+        return CreatedAtAction(nameof(GetById), new { id }, new { id });
     }
 
     [HttpPut("{id:long}")]
@@ -47,4 +47,30 @@ public class CompanyController : ControllerBase
         await _service.DeleteAsync(id);
         return NoContent();
     }
+
+
+    #region Plan
+    [HttpGet("{companyId}/plans")]
+    public async Task<IActionResult> GetCompanyPlans(long companyId) =>
+        Ok(await _service.GetCompanyPlans(companyId));
+
+    [HttpGet("{companyId}/plans/{companyPlanId}")]
+    public async Task<IActionResult> GetCompanyPlanById(long companyId, long companyPlanId) =>
+       Ok(await _service.GetCompanyPlanById(companyId, companyPlanId));
+
+
+    [HttpPost("{companyId}/plans")]
+    public async Task<IActionResult> AddPlanToCompany(long companyId, [FromBody] CreateCompanyPlanRequest request)
+    {
+        var id = await _service.AddPlanToCompany(companyId, request);
+        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+    }
+
+    [HttpPut("{companyId}/plans/{companyPlanId}")]
+    public async Task<IActionResult> UpdateCompanyPlan(long companyId, long companyPlanId, [FromBody] UpdateCompanyPlanRequest request)
+    {
+        await _service.UpdateCompanyPlan(companyId, companyPlanId, request);
+        return NoContent();
+    }
+    #endregion Plan
 }

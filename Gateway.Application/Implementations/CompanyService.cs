@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Gateway.Application.Company.Dtos;
 using Gateway.Application.Interfaces;
-using Gateway.Domain.Entities;
 using Gateway.Domain.Interfaces;
 
 namespace Gateway.Application.Implementations;
@@ -62,4 +61,57 @@ public class CompanyService : ICompanyService
 
         await _repository.DeleteAsync(company);
     }
+
+
+
+
+
+    #region CompanyPlans
+
+    public async Task<IEnumerable<CompanyPlanDto>> GetCompanyPlans(long companyId)
+    {
+        var company = await _repository.GetWithPlansAsync(companyId)
+            ?? throw new KeyNotFoundException("Company not found");
+        return _mapper.Map<IEnumerable<CompanyPlanDto>>(company.CompanyPlans);
+
+    }
+    public async Task<CompanyPlanDto> GetCompanyPlanById(long companyId, long companyPlanId)
+    {
+        var CompanyPlan = await _repository.GetCompanyPlanByIdAsync(companyId, companyPlanId)
+            ?? throw new KeyNotFoundException("Company not found");
+        return _mapper.Map<CompanyPlanDto>(CompanyPlan);
+
+    }
+
+    public async Task<long> AddPlanToCompany(long companyId, CreateCompanyPlanRequest request)
+    {
+        var company = await _repository.GetByIdAsync(companyId)
+            ?? throw new KeyNotFoundException("Company not found");
+        var plan = new Domain.Entities.CompanyPlan
+        {
+            CompanyId = companyId,
+            EndDate = request.EndDate,
+            StartDate = request.StartDate,
+            PlanId = request.PlanId,
+            IsActive = request.IsActive,
+            AutoRenew = request.AutoRenew,
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        company.addPlan(plan);
+        await _repository.UpdateAsync(company);
+        return plan.Id;
+    }
+
+    public async Task UpdateCompanyPlan(long companyId, long companyPlanId, UpdateCompanyPlanRequest request)
+    {
+        var company = await _repository.GetByIdAsync(companyId)
+            ?? throw new KeyNotFoundException("Company not found");
+
+        company.updatePlan(companyPlanId, request.StartDate, request.EndDate, request.AutoRenew, request.IsActive);
+        await _repository.UpdateAsync(company);
+    }
+
+
+    #endregion
 }

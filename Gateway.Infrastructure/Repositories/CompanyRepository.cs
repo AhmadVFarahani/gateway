@@ -2,6 +2,7 @@
 using Gateway.Domain.Interfaces;
 using Gateway.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace Gateway.Infrastructure.Repositories;
 
@@ -16,6 +17,16 @@ public class CompanyRepository : ICompanyRepository
 
     public async Task<Company?> GetByIdAsync(long id) =>
         await _context.Companies.FindAsync(id);
+    public async Task<Company?> GetWithPlansAsync(long id) =>
+        await _context.Companies
+        .Include(c => c.CompanyPlans)
+            .ThenInclude(c=>c.Plan)
+        .FirstOrDefaultAsync(c => c.Id == id);
+    public async Task<CompanyPlan?> GetCompanyPlanByIdAsync(long companyId, long companyPlanId) =>
+        await _context.CompanyPlans
+        .Include(c => c.Plan)
+       .FirstOrDefaultAsync(cp => cp.Id == companyPlanId && cp.CompanyId == companyId);
+
 
     public async Task<IEnumerable<Company>> GetAllAsync() =>
         await _context.Companies.ToListAsync();

@@ -19,6 +19,16 @@ public class ScopeRepository : IScopeRepository
         return await _context.Scopes.FindAsync(id);
     }
 
+    public async Task<Scope?> GetWithRoutesAsync(long id) =>
+        await _context.Scopes
+        .Include(c => c.RouteScopes)
+            .ThenInclude(c => c.Route)
+                .ThenInclude(c=>c.Service)
+        .FirstOrDefaultAsync(c => c.Id == id);
+    public async Task<RouteScope?> GetRouteScopeByIdAsync(long scopeId, long routeScopeId) =>
+       await _context.RouteScopes
+       .Include(c => c.Route)
+      .FirstOrDefaultAsync(cp => cp.Id == routeScopeId && cp.ScopeId == scopeId);
     public async Task<IEnumerable<Scope>> GetAllAsync()
     {
         return await _context.Scopes.ToListAsync();

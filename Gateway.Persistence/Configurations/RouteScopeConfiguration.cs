@@ -16,7 +16,7 @@ public class RouteScopeConfiguration : IEntityTypeConfiguration<RouteScope>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Scope)
-            .WithMany()
+            .WithMany(c => c.RouteScopes)
             .HasForeignKey(x => x.ScopeId)
             .OnDelete(DeleteBehavior.Cascade);
     }

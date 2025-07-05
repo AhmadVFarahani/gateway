@@ -18,7 +18,6 @@ public class Company:BaseEntity
 
     public void addPlan(CompanyPlan plan)
     {
-        if (plan == null) throw new ArgumentNullException(nameof(plan));
         CompanyPlans.Add(plan);
     }
 

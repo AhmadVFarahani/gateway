@@ -1,4 +1,6 @@
-﻿using Gateway.Application.Interfaces;
+﻿using Gateway.Application.Company.Dtos;
+using Gateway.Application.Interfaces;
+using Gateway.Application.RouteScopes.Dtos;
 using Gateway.Application.Scopes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,4 +47,33 @@ public class ScopesController : ControllerBase
         await _service.DeleteAsync(id);
         return NoContent();
     }
+
+
+    #region Route
+    [HttpGet("{scopeId}/routes")]
+    public async Task<IActionResult> GetRouteScopes(long scopeId) =>
+        Ok(await _service.GetRouteScopes(scopeId));
+
+    [HttpGet("{scopeId}/routes/{routeScopeId}")]
+    public async Task<IActionResult> GetRouteScopeById(long scopeId, long routeScopeId) =>
+       Ok(await _service.GetRouteScopeById(scopeId, routeScopeId));
+
+
+    [HttpPost("{scopeId}/routes")]
+    public async Task<IActionResult> AddRouteToScope(long scopeId, [FromBody] CreateRouteScopeRequest request)
+    {
+        var id = await _service.AddRouteToScope(scopeId, request);
+        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+    }
+
+
+
+    [HttpDelete("{scopeId}/routes/{routeScopeId}")]
+    public async Task<IActionResult> DeleteRouteScope(long scopeId, long routeScopeId)
+    {
+         await _service.DeleteRouteScope(scopeId, routeScopeId);
+        return NoContent();
+    }
+
+    #endregion Route
 }

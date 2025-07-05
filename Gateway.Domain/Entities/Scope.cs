@@ -1,9 +1,26 @@
-﻿namespace Gateway.Domain.Entities;
+﻿using System.ComponentModel.Design;
 
-public class Scope:BaseEntity
+namespace Gateway.Domain.Entities;
+
+public class Scope : BaseEntity
 {
-    public string Name { get; set; } = string.Empty; // مثل payment:write
-    public string DisplayName { get; set; } = string.Empty; // مثل "ثبت پرداخت"
-    public string Description { get; set; } = string.Empty; // توضیحات برای مدیریت
+    public string Name { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
+
+    public ICollection<RouteScope> RouteScopes { get; set; } = new List<RouteScope>();
+
+
+
+    public void addRoute(RouteScope route)
+    {
+        RouteScopes.Add(route);
+    }
+    public void deleteRoute(long routeId)
+    {
+        var route = RouteScopes.FirstOrDefault(s => s.Id == routeId)
+            ?? throw new KeyNotFoundException("route not found");
+        RouteScopes.Remove(route);
+    }
 }

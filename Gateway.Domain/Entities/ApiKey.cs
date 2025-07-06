@@ -8,4 +8,6 @@ public class ApiKey:BaseEntity
     public DateTime? ExpirationDate { get; set; }
 
     public User? User { get; set; }
+
+    public ICollection<AccessPolicy> AccessPolicies { get; set; } = new List<AccessPolicy>();
 }

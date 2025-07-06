@@ -31,6 +31,5 @@ public class Company:BaseEntity
         plan.IsActive = isActive;
         plan.AutoRenew = autoRenew;
         plan.UpdatedAt  = DateTime.UtcNow;
-        CompanyPlans.Add(plan);
     }
 }

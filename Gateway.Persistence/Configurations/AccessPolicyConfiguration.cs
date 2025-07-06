@@ -11,17 +11,17 @@ public class AccessPolicyConfiguration : IEntityTypeConfiguration<AccessPolicy>
         builder.HasKey(x => x.Id);
 
         builder.HasOne(x => x.User)
-            .WithMany()
+            .WithMany(c=>c.AccessPolicies)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.ApiKey)
-            .WithMany()
+            .WithMany(c => c.AccessPolicies)
             .HasForeignKey(x => x.ApiKeyId)
             .OnDelete(DeleteBehavior.Restrict);
-
+     
         builder.HasOne(x => x.Scope)
-            .WithMany()
+            .WithMany(c=>c.AccessPolicies)
             .HasForeignKey(x => x.ScopeId)
             .OnDelete(DeleteBehavior.Cascade);
 

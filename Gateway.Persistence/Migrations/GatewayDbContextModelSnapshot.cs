@@ -657,18 +657,18 @@ namespace Gateway.Persistence.Migrations
             modelBuilder.Entity("Gateway.Domain.Entities.AccessPolicy", b =>
                 {
                     b.HasOne("Gateway.Domain.Entities.ApiKey", "ApiKey")
-                        .WithMany()
+                        .WithMany("AccessPolicies")
                         .HasForeignKey("ApiKeyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Gateway.Domain.Entities.Scope", "Scope")
-                        .WithMany()
+                        .WithMany("AccessPolicies")
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Gateway.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("AccessPolicies")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -682,7 +682,7 @@ namespace Gateway.Persistence.Migrations
             modelBuilder.Entity("Gateway.Domain.Entities.ApiKey", b =>
                 {
                     b.HasOne("Gateway.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("ApiKeys")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -820,7 +820,7 @@ namespace Gateway.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("Gateway.Domain.Entities.Scope", "Scope")
-                        .WithMany()
+                        .WithMany("RouteScopes")
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -847,6 +847,11 @@ namespace Gateway.Persistence.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.ApiKey", b =>
+                {
+                    b.Navigation("AccessPolicies");
                 });
 
             modelBuilder.Entity("Gateway.Domain.Entities.Company", b =>
@@ -887,9 +892,23 @@ namespace Gateway.Persistence.Migrations
                     b.Navigation("Children");
                 });
 
+            modelBuilder.Entity("Gateway.Domain.Entities.Scope", b =>
+                {
+                    b.Navigation("AccessPolicies");
+
+                    b.Navigation("RouteScopes");
+                });
+
             modelBuilder.Entity("Gateway.Domain.Entities.Service", b =>
                 {
                     b.Navigation("Routes");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.User", b =>
+                {
+                    b.Navigation("AccessPolicies");
+
+                    b.Navigation("ApiKeys");
                 });
 #pragma warning restore 612, 618
         }

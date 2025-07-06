@@ -12,8 +12,8 @@ public class ScopeAuthorizationMiddleware
     }
 
     public async Task InvokeAsync(HttpContext context,
-        IRouteRepository routeRepository,
-        IAccessPolicyRepository accessPolicyRepository)
+        IRouteRepository routeRepository
+         )
     {
         if (context.User.Identity?.IsAuthenticated != true)
         {
@@ -44,13 +44,13 @@ public class ScopeAuthorizationMiddleware
         //    return;
         //}
 
-        var accessPolicies = await accessPolicyRepository.GetAllAsync();
-        var userScopes = accessPolicies
-            .Where(x =>
-                x.IsActive &&
-                (x.UserId.ToString() == userId || x.ApiKeyId.ToString() == apiKeyId))
-            .Select(x => x.ScopeId)
-            .ToHashSet();
+        //var accessPolicies = await accessPolicyRepository.GetAllAsync();
+        //var userScopes = accessPolicies
+        //    .Where(x =>
+        //        x.IsActive &&
+        //        (x.UserId.ToString() == userId || x.ApiKeyId.ToString() == apiKeyId))
+        //    .Select(x => x.ScopeId)
+        //    .ToHashSet();
 
         //var isAuthorized = requiredScopeIds.Any(scope => userScopes.Contains(scope));
 

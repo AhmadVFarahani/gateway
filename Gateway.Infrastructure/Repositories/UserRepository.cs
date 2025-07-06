@@ -19,6 +19,23 @@ public class UserRepository : IUserRepository
         return await _context.Users.Include(c => c.Company).Include(c => c.Role).FirstOrDefaultAsync(c => c.Id == id);
     }
 
+    public async Task<User?> GetWithAccessPolicyAsync(long id) =>
+        await _context.Users
+        .Include(c => c.AccessPolicies)
+            .ThenInclude(c=>c.Scope)
+        .Include(c => c.AccessPolicies)
+            .ThenInclude(c => c.ApiKey)
+        //.Include(c=>c.ApiKeys)
+        .FirstOrDefaultAsync(c => c.Id == id);
+    public async Task<AccessPolicy?> GetAccessPolicyByIdAsync(long userId, long accessPolicyId) =>
+        await _context.AccessPolicies
+        .Include(c => c.User)
+       .FirstOrDefaultAsync(cp => cp.Id == accessPolicyId && cp.UserId == userId);
+
+    public async Task<User?> GetWithApiKeyAsync(long id) =>
+       await _context.Users
+       .Include(c => c.ApiKeys)
+       .FirstOrDefaultAsync(c => c.Id == id);
     public async Task<IEnumerable<User>> GetAllAsync()
     {
         return await _context.Users.Include(c => c.Company).Include(c => c.Role).ToListAsync();

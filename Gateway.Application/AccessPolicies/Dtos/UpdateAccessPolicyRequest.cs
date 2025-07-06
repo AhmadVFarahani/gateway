@@ -1,6 +1,6 @@
 ﻿namespace Gateway.Application.AccessPolicies.Dtos;
 
-public class CreateAccessPolicyRequest
+public class UpdateAccessPolicyRequest
 {
     public long? UserId { get; set; }
     public long? ApiKeyId { get; set; }

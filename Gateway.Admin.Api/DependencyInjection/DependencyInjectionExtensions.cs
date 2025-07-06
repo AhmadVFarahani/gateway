@@ -18,7 +18,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IApiKeyService, ApiKeyService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IScopeService, ScopeService>();
-        services.AddScoped<IAccessPolicyService, AccessPolicyService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<ICompanyService, CompanyService>();
         services.AddScoped<IRoleService, RoleService>();
@@ -30,7 +29,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
         services.AddScoped<IScopeRepository, ScopeRepository>();
-        services.AddScoped<IAccessPolicyRepository, AccessPolicyRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();

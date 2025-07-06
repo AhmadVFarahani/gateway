@@ -10,6 +10,7 @@ public class Scope : BaseEntity
     public bool IsActive { get; set; } = true;
 
     public ICollection<RouteScope> RouteScopes { get; set; } = new List<RouteScope>();
+    public ICollection<AccessPolicy> AccessPolicies { get; set; } = new List<AccessPolicy>();
 
 
 

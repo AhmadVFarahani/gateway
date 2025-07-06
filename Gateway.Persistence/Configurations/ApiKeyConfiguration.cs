@@ -21,7 +21,7 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKey>
             .IsRequired();
 
         builder.HasOne(x => x.User)
-            .WithMany()
+            .WithMany(c=>c.ApiKeys)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

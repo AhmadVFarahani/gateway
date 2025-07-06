@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using Gateway.Application.AccessPolicies.Dtos;
+using Gateway.Application.ApiKeys;
+using Gateway.Application.Company.Dtos;
 using Gateway.Application.Interfaces;
 using Gateway.Application.Users;
 using Gateway.Domain.Entities;
 using Gateway.Domain.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Gateway.Application.Implementations;
 
@@ -64,10 +68,10 @@ public class UserService : IUserService
         user.UserName = request.UserName;
         user.UserType = request.UserType;
         user.IsActive = request.IsActive;
-        user.CompanyId= request.CompanyId;
+        user.CompanyId = request.CompanyId;
         user.RoleId = request.RoleId;
-        
-        
+
+
         user.UpdatedAt = DateTime.UtcNow;
 
         await _repository.UpdateAsync(user);
@@ -88,4 +92,63 @@ public class UserService : IUserService
         var hash = sha256.ComputeHash(bytes);
         return Convert.ToBase64String(hash);
     }
+
+
+    #region AccessPolicies
+    public async Task<IEnumerable<AccessPolicyDto>> GetAccessPoliciesAsync(long userId)
+    {
+        var user = await _repository.GetWithAccessPolicyAsync(userId)
+            ?? throw new KeyNotFoundException("User not found");
+        return _mapper.Map<IEnumerable<AccessPolicyDto>>(user.AccessPolicies);
+    }
+    public async Task<AccessPolicyDto> GetAccessPolicyByIdAsync(long userId, long accessPolicyId)
+    {
+        var accessPolicy = await _repository.GetAccessPolicyByIdAsync(userId, accessPolicyId)
+            ?? throw new KeyNotFoundException("User not found");
+        return _mapper.Map<AccessPolicyDto>(accessPolicy);
+    }
+    public async Task<long> AddAccessPolicyToUserAsync(long userId, CreateAccessPolicyRequest request)
+    {
+        var user = await _repository.GetWithAccessPolicyAsync(userId)
+           ?? throw new KeyNotFoundException("User not found");
+        var plan = new Domain.Entities.AccessPolicy
+        {
+            ApiKeyId = request.ApiKeyId,
+            IsActive = true,
+            ScopeId = request.ScopeId,
+            UserId = user.Id,
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        user.addAccessPolicy(plan);
+        await _repository.UpdateAsync(user);
+        return plan.Id;
+    }
+
+    public async Task DeleteAccessPolicyAsync(long userId, long accessPolicyId)
+    {
+        var user = await _repository.GetWithAccessPolicyAsync(userId)
+             ?? throw new KeyNotFoundException("User not found");
+
+        user.deleteAccessPolicy(accessPolicyId);
+        await _repository.UpdateAsync(user);
+    }
+    //public async Task UpdateCompanyPlan(long companyId, long companyPlanId, UpdateAccessPolicyRequest request)
+    //{
+    //    throw new NotImplementedException();
+    //}
+
+
+    #endregion AccessPolicies
+
+    #region APIKeys
+    public async Task<IEnumerable<ApiKeyDto>> GetApiKeysAsync(long userId)
+    {
+        var user = await _repository.GetWithApiKeyAsync(userId)
+            ?? throw new KeyNotFoundException("User not found");
+        return _mapper.Map<IEnumerable<ApiKeyDto>>(user.ApiKeys);
+    }
+    #endregion APIKeys
+
+
 }

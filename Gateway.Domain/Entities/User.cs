@@ -16,4 +16,28 @@ public class User:BaseEntity
 
     public long RoleId { get; set; }
     public Role Role { get; set; } = default!;
+
+    public ICollection<AccessPolicy> AccessPolicies { get; set; } = new List<AccessPolicy>();
+    public ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
+
+
+    public void addAccessPolicy(AccessPolicy access)
+    {
+        if (AccessPolicies.Any(c=>c.ApiKeyId==access.ApiKeyId && c.ScopeId==access.ScopeId))
+        {
+            throw new KeyNotFoundException("Duplicate Access Policy");
+        }
+        AccessPolicies.Add(access);
+    }
+    public void deleteAccessPolicy(long accessPolicyId)
+    {
+        var accessPolicy = AccessPolicies.FirstOrDefault(s => s.Id == accessPolicyId)
+            ?? throw new KeyNotFoundException("Access Policy not found");
+        AccessPolicies.Remove(accessPolicy);
+    }
+    //public void updateAcccessPolicy(long id, ApiKey, DateTime? endDate, bool autoRenew, bool isActive)
+    //{
+
+    //}
+
 }

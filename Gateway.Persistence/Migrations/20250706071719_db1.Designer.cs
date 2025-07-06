@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gateway.Persistence.Migrations
 {
     [DbContext(typeof(GatewayDbContext))]
-    [Migration("20250625005844_AddRouteRequest-ResponseFieldTable")]
-    partial class AddRouteRequestResponseFieldTable
+    [Migration("20250706071719_db1")]
+    partial class db1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,6 +100,206 @@ namespace Gateway.Persistence.Migrations
                     b.ToTable("ApiKeys");
                 });
 
+            modelBuilder.Entity("Gateway.Domain.Entities.Company", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.CompanyPlan", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("AutoRenew")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("PlanId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("PlanId");
+
+                    b.ToTable("CompanyPlans", (string)null);
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.CompanyRoutePricing", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BillingType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaxFreeCalls")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxFreeCallsPerMonth")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("MonthlySubscriptionPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PricePerCall")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long>("RouteId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TieredJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("RouteId");
+
+                    b.ToTable("CompanyRoutePricing", (string)null);
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.Plan", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsUnlimited")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxRequestsPerMonth")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MonthlyPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plans", (string)null);
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.PlanRoute", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("FlatPricePerCall")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsFree")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("PlanId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RouteId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TieredPricingJson")
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("RouteId");
+
+                    b.ToTable("PlanRoutes", (string)null);
+                });
+
             modelBuilder.Entity("Gateway.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<long>("Id")
@@ -138,6 +338,34 @@ namespace Gateway.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Gateway.Domain.Entities.Route", b =>
@@ -363,6 +591,11 @@ namespace Gateway.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -387,6 +620,9 @@ namespace Gateway.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -397,6 +633,9 @@ namespace Gateway.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -411,24 +650,28 @@ namespace Gateway.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("RoleId");
+
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Gateway.Domain.Entities.AccessPolicy", b =>
                 {
                     b.HasOne("Gateway.Domain.Entities.ApiKey", "ApiKey")
-                        .WithMany()
+                        .WithMany("AccessPolicies")
                         .HasForeignKey("ApiKeyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Gateway.Domain.Entities.Scope", "Scope")
-                        .WithMany()
+                        .WithMany("AccessPolicies")
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Gateway.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("AccessPolicies")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -442,12 +685,69 @@ namespace Gateway.Persistence.Migrations
             modelBuilder.Entity("Gateway.Domain.Entities.ApiKey", b =>
                 {
                     b.HasOne("Gateway.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("ApiKeys")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.CompanyPlan", b =>
+                {
+                    b.HasOne("Gateway.Domain.Entities.Company", "Company")
+                        .WithMany("CompanyPlans")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gateway.Domain.Entities.Plan", "Plan")
+                        .WithMany("CompanyPlans")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.CompanyRoutePricing", b =>
+                {
+                    b.HasOne("Gateway.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gateway.Domain.Entities.Route", "Route")
+                        .WithMany()
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Route");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.PlanRoute", b =>
+                {
+                    b.HasOne("Gateway.Domain.Entities.Plan", "Plan")
+                        .WithMany("PlanRoutes")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gateway.Domain.Entities.Route", "Route")
+                        .WithMany("PlanRoutes")
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Route");
                 });
 
             modelBuilder.Entity("Gateway.Domain.Entities.RefreshToken", b =>
@@ -504,7 +804,7 @@ namespace Gateway.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Gateway.Domain.Entities.Route", "Route")
-                        .WithMany()
+                        .WithMany("ResponseFields")
                         .HasForeignKey("RouteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -523,7 +823,7 @@ namespace Gateway.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("Gateway.Domain.Entities.Scope", "Scope")
-                        .WithMany()
+                        .WithMany("RouteScopes")
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -533,9 +833,56 @@ namespace Gateway.Persistence.Migrations
                     b.Navigation("Scope");
                 });
 
+            modelBuilder.Entity("Gateway.Domain.Entities.User", b =>
+                {
+                    b.HasOne("Gateway.Domain.Entities.Company", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gateway.Domain.Entities.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.ApiKey", b =>
+                {
+                    b.Navigation("AccessPolicies");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.Company", b =>
+                {
+                    b.Navigation("CompanyPlans");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.Plan", b =>
+                {
+                    b.Navigation("CompanyPlans");
+
+                    b.Navigation("PlanRoutes");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.Role", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Gateway.Domain.Entities.Route", b =>
                 {
+                    b.Navigation("PlanRoutes");
+
                     b.Navigation("RequestFields");
+
+                    b.Navigation("ResponseFields");
                 });
 
             modelBuilder.Entity("Gateway.Domain.Entities.RouteRequestField", b =>
@@ -548,9 +895,23 @@ namespace Gateway.Persistence.Migrations
                     b.Navigation("Children");
                 });
 
+            modelBuilder.Entity("Gateway.Domain.Entities.Scope", b =>
+                {
+                    b.Navigation("AccessPolicies");
+
+                    b.Navigation("RouteScopes");
+                });
+
             modelBuilder.Entity("Gateway.Domain.Entities.Service", b =>
                 {
                     b.Navigation("Routes");
+                });
+
+            modelBuilder.Entity("Gateway.Domain.Entities.User", b =>
+                {
+                    b.Navigation("AccessPolicies");
+
+                    b.Navigation("ApiKeys");
                 });
 #pragma warning restore 612, 618
         }

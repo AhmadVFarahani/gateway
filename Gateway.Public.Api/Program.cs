@@ -20,8 +20,6 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRouteRepository, RouteRepository>();
-builder.Services.AddScoped<IRouteScopeRepository, RouteScopeRepository>();
-builder.Services.AddScoped<IAccessPolicyRepository, AccessPolicyRepository>();
 
 
 // JWT Authentication Setup

@@ -1,5 +1,6 @@
 ﻿using Gateway.Application.Interfaces;
 using Gateway.Application.Plan.Dtos;
+using Gateway.Application.RouteScopes.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gateway.Admin.Api.Controllers;
@@ -46,4 +47,38 @@ public  class PlanController : ControllerBase
         await _service.DeleteAsync(id);
         return NoContent();
     }
+
+    #region Route
+    [HttpGet("{planId}/routes")]
+    public async Task<IActionResult> GetPlanRoutes(long planId) =>
+        Ok(await _service.GetPlanRouteAsync(planId));
+
+    [HttpGet("{planId}/routes/{planRouteId}")]
+    public async Task<IActionResult> GetPlanRouteById(long planId, long planRouteId) =>
+       Ok(await _service.GetPlanRouteByIdAsync(planId, planRouteId));
+
+
+    [HttpPost("{planId}/routes")]
+    public async Task<IActionResult> AddRouteToPlan(long planId, [FromBody] CreatePlanRouteRequest request)
+    {
+        var id = await _service.AddRouteToPlanAsync(planId, request);
+        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+    }
+
+    [HttpPut("{userId}/routes/{planRouteId}")]
+    public async Task<IActionResult> UpdatePlanRoute(long planId, long planRouteId, [FromBody] UpdatePlanRouteRequest request)
+    {
+        await _service.UpdatePlanRouteAsync(planId, planRouteId, request);
+        return NoContent();
+    }
+
+
+    [HttpDelete("{planId}/routes/{planRouteId}")]
+    public async Task<IActionResult> DeleteRouteScope(long planId, long planRouteId)
+    {
+        await _service.DeleteRoutePlanAsync(planId, planRouteId);
+        return NoContent();
+    }
+
+    #endregion Route
 }

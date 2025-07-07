@@ -52,17 +52,17 @@ public class ScopesController : ControllerBase
     #region Route
     [HttpGet("{scopeId}/routes")]
     public async Task<IActionResult> GetRouteScopes(long scopeId) =>
-        Ok(await _service.GetRouteScopes(scopeId));
+        Ok(await _service.GetRouteScopesAsync(scopeId));
 
     [HttpGet("{scopeId}/routes/{routeScopeId}")]
     public async Task<IActionResult> GetRouteScopeById(long scopeId, long routeScopeId) =>
-       Ok(await _service.GetRouteScopeById(scopeId, routeScopeId));
+       Ok(await _service.GetRouteScopeByIdAsync(scopeId, routeScopeId));
 
 
     [HttpPost("{scopeId}/routes")]
     public async Task<IActionResult> AddRouteToScope(long scopeId, [FromBody] CreateRouteScopeRequest request)
     {
-        var id = await _service.AddRouteToScope(scopeId, request);
+        var id = await _service.AddRouteToScopeAsync(scopeId, request);
         return CreatedAtAction(nameof(GetById), new { id }, new { id });
     }
 
@@ -71,7 +71,7 @@ public class ScopesController : ControllerBase
     [HttpDelete("{scopeId}/routes/{routeScopeId}")]
     public async Task<IActionResult> DeleteRouteScope(long scopeId, long routeScopeId)
     {
-         await _service.DeleteRouteScope(scopeId, routeScopeId);
+         await _service.DeleteRouteScopeAsync(scopeId, routeScopeId);
         return NoContent();
     }
 

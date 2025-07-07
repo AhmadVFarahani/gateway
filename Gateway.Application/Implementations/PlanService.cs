@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Gateway.Application.AccessPolicies.Dtos;
 using Gateway.Application.Interfaces;
 using Gateway.Application.Plan.Dtos;
+using Gateway.Domain.Entities;
 using Gateway.Domain.Interfaces;
 
 namespace Gateway.Application.Implementations;
@@ -82,59 +84,59 @@ public class PlanService : IPlanService
 
 
 
-    #region PlanRoute
-    public async Task<PlanRouteDto?> GetPlanRouteByIdAsync(long id)
-    {
-        var plan = await _planRepository.GetPlanRouteByIdAsync(id);
-        return plan == null ? null : _mapper.Map<PlanRouteDto>(plan);
-    }
+    #region Routes
 
-    public async Task<IEnumerable<PlanRouteDto>> GetPlanRouteByPlanId(long id)
+    public async Task<IEnumerable<PlanRouteDto>> GetPlanRouteAsync(long planId)
     {
-        var planRoute = await _planRepository.GetPlanRouteByPlanId(id);
-        return _mapper.Map<IEnumerable<PlanRouteDto>>(planRoute);
-    }
-    public async Task<IEnumerable<PlanRouteDto>> GetPlanRouteByRouteId(long id)
-    {
-        var planRoute = await _planRepository.GetPlanRouteByRouteId(id);
-        var response = _mapper.Map<IEnumerable<PlanRouteDto>>(planRoute);
-
-        return response;
-    }
-
-    public async Task<long> CreatePlanRouteAsync(CreatePlanRouteRequest request)
-    {
-        var plan = await _planRepository.GetByIdAsync(request.PlanId)
+        var plan = await _planRepository.GetWithRouteAsync(planId)
             ?? throw new KeyNotFoundException("Plan not found");
-        var route = await _routeRepository.GetByIdAsync(request.RouteId)
-            ?? throw new KeyNotFoundException("Route not found");
+        return _mapper.Map<IEnumerable<PlanRouteDto>>(plan.PlanRoutes);
+    }
 
-        var planRoute = new Domain.Entities.PlanRoute
+    public async Task<PlanRouteDto> GetPlanRouteByIdAsync(long planId, long planRouteId)
+    {
+        var planRoute = await _planRepository.GetPlanRouteByIdAsync(planId, planRouteId)
+              ?? throw new KeyNotFoundException("PlanRoute not found");
+        return _mapper.Map<PlanRouteDto>(planRoute);
+    }
+
+    public async Task<long> AddRouteToPlanAsync(long planId, CreatePlanRouteRequest request)
+    {
+        var plan = await _planRepository.GetWithRouteAsync(planId)
+             ?? throw new KeyNotFoundException("Plan not found");
+        var planRoute = new PlanRoute
         {
-            PlanId = request.PlanId,
-            RouteId = request.RouteId,
+            IsFree = request.IsFree,
             FlatPricePerCall = request.FlatPricePerCall,
             TieredPricingJson = request.TieredPricingJson,
-            IsFree = request.IsFree,
+            PlanId = planId,
+            RouteId = request.RouteId,
 
             CreatedAt = DateTime.UtcNow,
         };
 
         plan.addRoute(planRoute);
-
         await _planRepository.UpdateAsync(plan);
-        return planRoute.Id;
+        return plan.Id;
     }
 
-    public async Task UpdatePlanRouteAsync(long id, UpdatePlanRouteRequest request)
+    public async Task UpdatePlanRouteAsync(long planId, long planRouteId, UpdatePlanRouteRequest request)
     {
-        var plan = await _planRepository.GetByIdAsync(request.PlanId)
-            ?? throw new KeyNotFoundException("Plan not found");
+        var plan = await _planRepository.GetWithRouteAsync(request.PlanId)
+           ?? throw new KeyNotFoundException("Plan not found");
 
-        plan.UpdateRoute(id, request.FlatPricePerCall, request.TieredPricingJson, request.IsFree);
+        plan.UpdateRoute(planId, request.FlatPricePerCall, request.TieredPricingJson, request.IsFree);
 
         await _planRepository.UpdateAsync(plan);
     }
 
-    #endregion
+    public async Task DeleteRoutePlanAsync(long planId, long planRouteId)
+    {
+        var plan = await _planRepository.GetWithRouteAsync(planId)
+             ?? throw new KeyNotFoundException("Plan not found");
+
+        plan.deleteRoute(planRouteId);
+        await _planRepository.UpdateAsync(plan);
+    }
+    #endregion Routes
 }

@@ -38,4 +38,11 @@ public class Plan : BaseEntity
         planRoute.IsFree = IsFree;
         planRoute.UpdatedAt = DateTime.UtcNow;
     }
+
+    public void deleteRoute(long planRouteId)
+    {
+        var planRoute = PlanRoutes.FirstOrDefault(s => s.Id == planRouteId)
+            ?? throw new KeyNotFoundException("Plan Route not found");
+        PlanRoutes.Remove(planRoute);
+    }
 }

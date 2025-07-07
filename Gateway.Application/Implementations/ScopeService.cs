@@ -70,13 +70,13 @@ public class ScopeService : IScopeService
 
     #region Route
 
-    public async Task<IEnumerable<RouteScopeDto>> GetRouteScopes(long scopeId)
+    public async Task<IEnumerable<RouteScopeDto>> GetRouteScopesAsync(long scopeId)
     {
         var scope = await _repository.GetWithRoutesAsync(scopeId)
             ?? throw new KeyNotFoundException("Scope not found");
         return _mapper.Map<IEnumerable<RouteScopeDto>>(scope.RouteScopes);
     }
-    public async Task<RouteScopeDto> GetRouteScopeById(long scopeId, long routeScopeId)
+    public async Task<RouteScopeDto> GetRouteScopeByIdAsync(long scopeId, long routeScopeId)
     {
         var routeScope = await _repository.GetRouteScopeByIdAsync(scopeId, routeScopeId)
             ?? throw new KeyNotFoundException("Scope not found");
@@ -84,7 +84,7 @@ public class ScopeService : IScopeService
 
     }
 
-    public async Task<long> AddRouteToScope(long scopeId, CreateRouteScopeRequest request)
+    public async Task<long> AddRouteToScopeAsync(long scopeId, CreateRouteScopeRequest request)
     {
         var scope = await _repository.GetByIdAsync(scopeId)
             ?? throw new KeyNotFoundException("Company not found");
@@ -101,7 +101,7 @@ public class ScopeService : IScopeService
         return plan.Id;
     }
 
-    public async Task DeleteRouteScope(long scopeId, long routeScopeId)
+    public async Task DeleteRouteScopeAsync(long scopeId, long routeScopeId)
     {
         var scope = await _repository.GetWithRoutesAsync(scopeId)
             ?? throw new KeyNotFoundException("Scope not found");

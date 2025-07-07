@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using Gateway.Application.AccessPolicies.Dtos;
 using Gateway.Application.ApiKeys;
-using Gateway.Application.Company.Dtos;
 using Gateway.Application.Interfaces;
 using Gateway.Application.Users;
 using Gateway.Domain.Entities;
 using Gateway.Domain.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Gateway.Application.Implementations;
 

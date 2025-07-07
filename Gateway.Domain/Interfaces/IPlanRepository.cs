@@ -11,8 +11,7 @@ public interface IPlanRepository
     Task DeleteAsync(Plan plan);
 
 
-    Task<PlanRoute?> GetPlanRouteByIdAsync(long id);
-    Task<IEnumerable<PlanRoute>> GetPlanRouteByPlanId(long planId);
-    Task<IEnumerable<PlanRoute>> GetPlanRouteByRouteId(long routeId);
+    Task<Plan?> GetWithRouteAsync(long id);
+    Task<PlanRoute?> GetPlanRouteByIdAsync(long planId, long planRouteId);
 
 }

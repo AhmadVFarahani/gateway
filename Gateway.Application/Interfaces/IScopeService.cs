@@ -12,9 +12,9 @@ public interface IScopeService
     Task DeleteAsync(long id);
 
     #region Route
-    Task<IEnumerable<RouteScopeDto>> GetRouteScopes(long scopeId);
-    Task<RouteScopeDto> GetRouteScopeById(long scopeId, long routeScopeId);
-    Task<long> AddRouteToScope(long scopeId, CreateRouteScopeRequest request);
-    Task DeleteRouteScope(long scopeId, long routeScopeId);
+    Task<IEnumerable<RouteScopeDto>> GetRouteScopesAsync(long scopeId);
+    Task<RouteScopeDto> GetRouteScopeByIdAsync(long scopeId, long routeScopeId);
+    Task<long> AddRouteToScopeAsync(long scopeId, CreateRouteScopeRequest request);
+    Task DeleteRouteScopeAsync(long scopeId, long routeScopeId);
     #endregion Route
 }

@@ -15,7 +15,7 @@ public class PlanRepository : IPlanRepository
     }
 
     public async Task<Plan?> GetByIdAsync(long id) =>
-        await _context.Plans.Include(c => c.PlanRoutes).FirstOrDefaultAsync(c => c.Id == id);
+        await _context.Plans.FindAsync( id);
 
     public async Task<IEnumerable<Plan>> GetAllAsync() =>
         await _context.Plans.ToListAsync();
@@ -38,23 +38,17 @@ public class PlanRepository : IPlanRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<PlanRoute>> GetPlanRouteByPlanId(long planId)
-    {
-        return await _context.PlanRoutes
-                      .Where(pr => pr.PlanId == planId)
-                      .ToListAsync();
-    }
 
-    public async Task<IEnumerable<PlanRoute>> GetPlanRouteByRouteId(long routeId)
-    {
-        return await _context.PlanRoutes
-                       .Where(pr => pr.RouteId == routeId)
-                       .ToListAsync();
-    }
+  public async  Task<Plan?> GetWithRouteAsync(long id)=>
+        await _context.Plans
+         .Include(c => c.PlanRoutes)
+            .ThenInclude(c=>c.Route)
+         .FirstOrDefaultAsync(c => c.Id == id);
 
-    Task<PlanRoute?> IPlanRepository.GetPlanRouteByIdAsync(long id)
-    {
-        throw new NotImplementedException();
-    }
+
+    public async Task<PlanRoute?> GetPlanRouteByIdAsync(long planId, long planRouteId)=>
+     await _context.PlanRoutes
+        .Include(c => c.Plan)
+       .FirstOrDefaultAsync(cp => cp.Id == planRouteId && cp.PlanId == planId);
 
 }

@@ -38,5 +38,10 @@ public class CompanyRoutePricingConfiguration : IEntityTypeConfiguration<Company
         builder.Property(crp => crp.IsActive).IsRequired();
         builder.Property(crp => crp.CreatedAt).IsRequired();
         builder.Property(crp => crp.UpdatedAt).IsRequired(false);
+
+
+        builder.HasOne(cp => cp.Company)
+            .WithMany(c => c.CompanyRoutePricings)
+            .HasForeignKey(cp => cp.CompanyId);
     }
 }

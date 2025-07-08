@@ -52,50 +52,57 @@ public class CompanyController : ControllerBase
     #region Plan
     [HttpGet("{companyId}/plans")]
     public async Task<IActionResult> GetCompanyPlans(long companyId) =>
-        Ok(await _service.GetCompanyPlans(companyId));
+        Ok(await _service.GetCompanyPlanssAsync(companyId));
 
     [HttpGet("{companyId}/plans/{companyPlanId}")]
     public async Task<IActionResult> GetCompanyPlanById(long companyId, long companyPlanId) =>
-       Ok(await _service.GetCompanyPlanById(companyId, companyPlanId));
+       Ok(await _service.GetCompanyPlanByIdsAsync(companyId, companyPlanId));
 
 
     [HttpPost("{companyId}/plans")]
     public async Task<IActionResult> AddPlanToCompany(long companyId, [FromBody] CreateCompanyPlanRequest request)
     {
-        var id = await _service.AddPlanToCompany(companyId, request);
+        var id = await _service.AddPlanToCompanysAsync(companyId, request);
         return CreatedAtAction(nameof(GetById), new { id }, new { id });
     }
 
     [HttpPut("{companyId}/plans/{companyPlanId}")]
     public async Task<IActionResult> UpdateCompanyPlan(long companyId, long companyPlanId, [FromBody] UpdateCompanyPlanRequest request)
     {
-        await _service.UpdateCompanyPlan(companyId, companyPlanId, request);
+        await _service.UpdateCompanyPlansAsync(companyId, companyPlanId, request);
         return NoContent();
     }
     #endregion Plan
 
     #region RoutePricing
-    //[HttpGet("{companyId}/RoutePricing")]
-    //public async Task<IActionResult> GetCompanyPlans(long companyId) =>
-    //    Ok(await _service.GetCompanyPlans(companyId));
+    [HttpGet("{companyId}/RoutePricing")]
+    public async Task<IActionResult> GetCompanyRoutingPrices(long companyId) =>
+        Ok(await _service.GetCompanyRoutePricingssAsync(companyId));
 
-    //[HttpGet("{companyId}/plans/{companyPlanId}")]
-    //public async Task<IActionResult> GetCompanyPlanById(long companyId, long companyPlanId) =>
-    //   Ok(await _service.GetCompanyPlanById(companyId, companyPlanId));
+    [HttpGet("{companyId}/RoutePricing/{routingPriceId}")]
+    public async Task<IActionResult> GetCompanyRoutingPriceById(long companyId, long routingPriceId) =>
+       Ok(await _service.GetCompanyRoutePricingByIdsAsync(companyId, routingPriceId));
 
 
-    //[HttpPost("{companyId}/plans")]
-    //public async Task<IActionResult> AddPlanToCompany(long companyId, [FromBody] CreateCompanyPlanRequest request)
-    //{
-    //    var id = await _service.AddPlanToCompany(companyId, request);
-    //    return CreatedAtAction(nameof(GetById), new { id }, new { id });
-    //}
+    [HttpPost("{companyId}/RoutePricing")]
+    public async Task<IActionResult> AddRoutingPriceToCompany(long companyId, [FromBody] CreateCompanyRoutePricingRequest request)
+    {
+        var id = await _service.AddRoutePricingToCompanysAsync(companyId, request);
+        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+    }
 
-    //[HttpPut("{companyId}/plans/{companyPlanId}")]
-    //public async Task<IActionResult> UpdateCompanyPlan(long companyId, long companyPlanId, [FromBody] UpdateCompanyPlanRequest request)
-    //{
-    //    await _service.UpdateCompanyPlan(companyId, companyPlanId, request);
-    //    return NoContent();
-    //}
+    [HttpPut("{companyId}/RoutePricing/{companyPlanId}")]
+    public async Task<IActionResult> UpdateRoutingPrice(long companyId, long routingPriceId, [FromBody] UpdateCompanyRoutePricingRequest request)
+    {
+        await _service.UpdateCompanyRoutePricingAsync(companyId, routingPriceId, request);
+        return NoContent();
+    }
+
+    [HttpDelete("{scopeId}/RoutePricing/{routingPriceId}")]
+    public async Task<IActionResult> DeleteRouteScope(long companyId, long routingPriceId)
+    {
+        await _service.DeleteRoutePricingAsync(companyId, routingPriceId);
+        return NoContent();
+    }
     #endregion RoutePricing
 }

@@ -68,14 +68,14 @@ public class CompanyService : ICompanyService
 
     #region CompanyPlans
 
-    public async Task<IEnumerable<CompanyPlanDto>> GetCompanyPlans(long companyId)
+    public async Task<IEnumerable<CompanyPlanDto>> GetCompanyPlanssAsync(long companyId)
     {
         var company = await _repository.GetWithPlansAsync(companyId)
             ?? throw new KeyNotFoundException("Company not found");
         return _mapper.Map<IEnumerable<CompanyPlanDto>>(company.CompanyPlans);
 
     }
-    public async Task<CompanyPlanDto> GetCompanyPlanById(long companyId, long companyPlanId)
+    public async Task<CompanyPlanDto> GetCompanyPlanByIdsAsync(long companyId, long companyPlanId)
     {
         var CompanyPlan = await _repository.GetCompanyPlanByIdAsync(companyId, companyPlanId)
             ?? throw new KeyNotFoundException("Company not found");
@@ -83,9 +83,9 @@ public class CompanyService : ICompanyService
 
     }
 
-    public async Task<long> AddPlanToCompany(long companyId, CreateCompanyPlanRequest request)
+    public async Task<long> AddPlanToCompanysAsync(long companyId, CreateCompanyPlanRequest request)
     {
-        var company = await _repository.GetByIdAsync(companyId)
+        var company = await _repository.GetWithPlansAsync(companyId)
             ?? throw new KeyNotFoundException("Company not found");
         var plan = new Domain.Entities.CompanyPlan
         {
@@ -103,9 +103,9 @@ public class CompanyService : ICompanyService
         return plan.Id;
     }
 
-    public async Task UpdateCompanyPlan(long companyId, long companyPlanId, UpdateCompanyPlanRequest request)
+    public async Task UpdateCompanyPlansAsync(long companyId, long companyPlanId, UpdateCompanyPlanRequest request)
     {
-        var company = await _repository.GetByIdAsync(companyId)
+        var company = await _repository.GetWithPlansAsync(companyId)
             ?? throw new KeyNotFoundException("Company not found");
 
         company.updatePlan(companyPlanId, request.StartDate, request.EndDate, request.AutoRenew, request.IsActive);
@@ -113,5 +113,65 @@ public class CompanyService : ICompanyService
     }
 
 
+    #endregion
+
+    #region RoutePricing
+
+    public async Task<IEnumerable<CompanyRoutePricingDto>> GetCompanyRoutePricingssAsync(long companyId)
+    {
+        var company = await _repository.GetWithRoutePricingsAsync(companyId)
+            ?? throw new KeyNotFoundException("Company not found");
+        return _mapper.Map<IEnumerable<CompanyRoutePricingDto>>(company.CompanyPlans);
+
+    }
+    public async Task<CompanyRoutePricingDto> GetCompanyRoutePricingByIdsAsync(long companyId, long routingPriceId)
+    {
+        var CompanyPlan = await _repository.GetCompanyRoutePricingByIdAsync(companyId, routingPriceId)
+            ?? throw new KeyNotFoundException("Company not found");
+        return _mapper.Map<CompanyRoutePricingDto>(CompanyPlan);
+
+    }
+
+    public async Task<long> AddRoutePricingToCompanysAsync(long companyId, CreateCompanyRoutePricingRequest request)
+    {
+        var company = await _repository.GetWithRoutePricingsAsync(companyId)
+            ?? throw new KeyNotFoundException("Company not found");
+        var routePricing = new Domain.Entities.CompanyRoutePricing
+        {
+            CompanyId = companyId,
+            BillingType = request.BillingType,
+            RouteId = request.RouteId,
+            MaxFreeCalls = request.MaxFreeCalls,
+            MaxFreeCallsPerMonth = request.MaxFreeCallsPerMonth,
+            PricePerCall = request.PricePerCall,
+            MonthlySubscriptionPrice = request.MonthlySubscriptionPrice,
+            TieredJson = request.TieredJson,
+
+            IsActive = request.IsActive,
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        company.addRoutePricing(routePricing);
+        await _repository.UpdateAsync(company);
+        return routePricing.Id;
+    }
+
+    public async Task UpdateCompanyRoutePricingAsync(long companyId, long routingPriceId, UpdateCompanyRoutePricingRequest request)
+    {
+        var company = await _repository.GetWithRoutePricingsAsync(companyId)
+            ?? throw new KeyNotFoundException("Company not found");
+
+        company.updateRoutePricing(routingPriceId, request.BillingType,request.RouteId,request.PricePerCall,request.MaxFreeCallsPerMonth,request.MaxFreeCalls,request.TieredJson,request.MonthlySubscriptionPrice,request.IsActive);
+        await _repository.UpdateAsync(company);
+    }
+
+    public async Task DeleteRoutePricingAsync(long companyId, long routingPriceId)
+    {
+        var company = await _repository.GetWithRoutePricingsAsync(companyId)
+            ?? throw new KeyNotFoundException("Scope not found");
+
+        company.deleteRoutePricing(routingPriceId);
+        await _repository.UpdateAsync(company);
+    }
     #endregion
 }

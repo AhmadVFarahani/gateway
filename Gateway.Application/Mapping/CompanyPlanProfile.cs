@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Gateway.Application.Company.Dtos;
+using Gateway.Domain.Entities;
 
 namespace Gateway.Application.Mapping;
 

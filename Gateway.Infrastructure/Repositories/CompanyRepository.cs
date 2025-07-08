@@ -22,10 +22,22 @@ public class CompanyRepository : ICompanyRepository
         .Include(c => c.CompanyPlans)
             .ThenInclude(c=>c.Plan)
         .FirstOrDefaultAsync(c => c.Id == id);
+
+    public async Task<Company?> GetWithRoutePricingsAsync(long id) =>
+       await _context.Companies
+       .Include(c => c.CompanyRoutePricings)
+           .ThenInclude(c => c.Route)
+       .FirstOrDefaultAsync(c => c.Id == id);
+
+
     public async Task<CompanyPlan?> GetCompanyPlanByIdAsync(long companyId, long companyPlanId) =>
         await _context.CompanyPlans
         .Include(c => c.Plan)
        .FirstOrDefaultAsync(cp => cp.Id == companyPlanId && cp.CompanyId == companyId);
+    public async Task<CompanyRoutePricing?> GetCompanyRoutePricingByIdAsync(long companyId, long routingPriceId) =>
+        await _context.CompanyRoutePricing
+        .Include(c => c.Route)
+       .FirstOrDefaultAsync(cp => cp.Id == routingPriceId && cp.CompanyId == companyId);
 
 
     public async Task<IEnumerable<Company>> GetAllAsync() =>

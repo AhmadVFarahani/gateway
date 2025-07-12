@@ -1,8 +1,8 @@
 ﻿using Gateway.Application.Base;
 
-namespace Gateway.Application.Company.Dtos;
+namespace Gateway.Application.Contract.Dtos;
 
-public class CompanyPlanDto:BaseDto
+public class ContractDto:BaseDto
 {
     public long PlanId { get; set; }
     public string PlanName { get; set; } = string.Empty;

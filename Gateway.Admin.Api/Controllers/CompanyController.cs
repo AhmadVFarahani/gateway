@@ -1,5 +1,6 @@
 ﻿
 using Gateway.Application.Company.Dtos;
+using Gateway.Application.Contract.Dtos;
 using Gateway.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,49 +61,18 @@ public class CompanyController : ControllerBase
 
 
     [HttpPost("{companyId}/plans")]
-    public async Task<IActionResult> AddPlanToCompany(long companyId, [FromBody] CreateCompanyPlanRequest request)
+    public async Task<IActionResult> AddPlanToCompany(long companyId, [FromBody] CreateContractRequest request)
     {
         var id = await _service.AddPlanToCompanysAsync(companyId, request);
         return CreatedAtAction(nameof(GetById), new { id }, new { id });
     }
 
     [HttpPut("{companyId}/plans/{companyPlanId}")]
-    public async Task<IActionResult> UpdateCompanyPlan(long companyId, long companyPlanId, [FromBody] UpdateCompanyPlanRequest request)
+    public async Task<IActionResult> UpdateCompanyPlan(long companyId, long companyPlanId, [FromBody] UpdateContractRequest request)
     {
         await _service.UpdateCompanyPlansAsync(companyId, companyPlanId, request);
         return NoContent();
     }
     #endregion Plan
 
-    #region RoutePricing
-    [HttpGet("{companyId}/RoutePricing")]
-    public async Task<IActionResult> GetCompanyRoutingPrices(long companyId) =>
-        Ok(await _service.GetCompanyRoutePricingssAsync(companyId));
-
-    [HttpGet("{companyId}/RoutePricing/{routingPriceId}")]
-    public async Task<IActionResult> GetCompanyRoutingPriceById(long companyId, long routingPriceId) =>
-       Ok(await _service.GetCompanyRoutePricingByIdsAsync(companyId, routingPriceId));
-
-
-    [HttpPost("{companyId}/RoutePricing")]
-    public async Task<IActionResult> AddRoutingPriceToCompany(long companyId, [FromBody] CreateCompanyRoutePricingRequest request)
-    {
-        var id = await _service.AddRoutePricingToCompanysAsync(companyId, request);
-        return CreatedAtAction(nameof(GetById), new { id }, new { id });
-    }
-
-    [HttpPut("{companyId}/RoutePricing/{companyPlanId}")]
-    public async Task<IActionResult> UpdateRoutingPrice(long companyId, long routingPriceId, [FromBody] UpdateCompanyRoutePricingRequest request)
-    {
-        await _service.UpdateCompanyRoutePricingAsync(companyId, routingPriceId, request);
-        return NoContent();
-    }
-
-    [HttpDelete("{scopeId}/RoutePricing/{routingPriceId}")]
-    public async Task<IActionResult> DeleteRouteScope(long companyId, long routingPriceId)
-    {
-        await _service.DeleteRoutePricingAsync(companyId, routingPriceId);
-        return NoContent();
-    }
-    #endregion RoutePricing
 }

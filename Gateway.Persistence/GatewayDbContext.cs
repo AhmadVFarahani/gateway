@@ -28,8 +28,7 @@ public class GatewayDbContext : DbContext
 
     public DbSet<Plan> Plans { get; set; }
     public DbSet<PlanRoute> PlanRoutes { get; set; }
-    public DbSet<CompanyPlan> CompanyPlans { get; set; }
-    public DbSet<CompanyRoutePricing> CompanyRoutePricing { get; set; }
+    public DbSet<Contract> Contracts { get; set; }
 
     public DbSet<Invoice> Invoices{ get; set; }
     public DbSet<InvoiceItem> InvoiceItems{ get; set; }
@@ -56,8 +55,7 @@ public class GatewayDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new PlanConfiguration());
         modelBuilder.ApplyConfiguration(new PlanRouteConfiguration());
-        modelBuilder.ApplyConfiguration(new CompanyPlanConfiguration());
-        modelBuilder.ApplyConfiguration(new CompanyRoutePricingConfiguration());
+        modelBuilder.ApplyConfiguration(new ContractConfiguration());
         
         modelBuilder.ApplyConfiguration(new InvoiceConfig());
         modelBuilder.ApplyConfiguration(new InvoiceItemConfig());

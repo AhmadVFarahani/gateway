@@ -1,4 +1,5 @@
 ﻿using Gateway.Application.Company.Dtos;
+using Gateway.Application.Contract.Dtos;
 
 namespace Gateway.Application.Interfaces;
 
@@ -11,17 +12,10 @@ public interface ICompanyService
     Task DeleteAsync(long id);
 
     #region Plan
-    Task<IEnumerable<CompanyPlanDto>> GetCompanyPlanssAsync(long companyId);
-    Task<CompanyPlanDto> GetCompanyPlanByIdsAsync(long companyId, long companyPlanId);
-    Task<long> AddPlanToCompanysAsync(long companyId,CreateCompanyPlanRequest request);
-    Task UpdateCompanyPlansAsync(long companyId, long companyPlanId,  UpdateCompanyPlanRequest request);
+    Task<IEnumerable<ContractDto>> GetCompanyPlanssAsync(long companyId);
+    Task<ContractDto> GetCompanyPlanByIdsAsync(long companyId, long companyPlanId);
+    Task<long> AddPlanToCompanysAsync(long companyId,CreateContractRequest request);
+    Task UpdateCompanyPlansAsync(long companyId, long companyPlanId,  UpdateContractRequest request);
     #endregion Plan
 
-    #region RoutePricing
-    Task<IEnumerable<CompanyRoutePricingDto>> GetCompanyRoutePricingssAsync(long companyId);
-    Task<CompanyRoutePricingDto> GetCompanyRoutePricingByIdsAsync(long companyId, long routingPriceId);
-    Task<long> AddRoutePricingToCompanysAsync(long companyId, CreateCompanyRoutePricingRequest request);
-    Task UpdateCompanyRoutePricingAsync(long companyId, long routingPriceId, UpdateCompanyRoutePricingRequest request);
-    Task DeleteRoutePricingAsync(long companyId, long routingPriceId);
-    #endregion RoutePricing
 }

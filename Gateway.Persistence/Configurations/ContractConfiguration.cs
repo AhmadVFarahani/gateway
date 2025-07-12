@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Persistence.Configurations;
 
-public class CompanyPlanConfiguration : IEntityTypeConfiguration<CompanyPlan>
+public class ContractConfiguration : IEntityTypeConfiguration<Contract>
 {
-    public void Configure(EntityTypeBuilder<CompanyPlan> builder)
+    public void Configure(EntityTypeBuilder<Contract> builder)
     {
-        builder.ToTable("CompanyPlans");
+        builder.ToTable("Contracts");
 
         builder.HasKey(cp => cp.Id);
 

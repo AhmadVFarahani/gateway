@@ -1,6 +1,8 @@
-﻿namespace Gateway.Domain.Entities;
+﻿using Gateway.Application.Base;
 
-public class InvoiceItem : BaseEntity
+namespace Gateway.Application.Invoice.Dtos;
+
+public class InvoiceItemDto : BaseDto
 {
     public long InvoiceId { get; set; }
 
@@ -12,5 +14,4 @@ public class InvoiceItem : BaseEntity
 
     public string? TierDetails { get; set; } // Optional: JSON or description
 
-    public Invoice Invoice { get; set; } = default!;
 }

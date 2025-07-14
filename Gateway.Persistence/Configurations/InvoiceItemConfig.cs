@@ -12,6 +12,8 @@ public class InvoiceItemConfig : IEntityTypeConfiguration<InvoiceItem>
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.RouteId).IsRequired(false);
+
         builder.Property(x => x.TierDetails)
                .HasColumnType("nvarchar(max)");
 

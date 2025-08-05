@@ -17,7 +17,17 @@ public class PlanConfiguration : IEntityTypeConfiguration<Plan>
             .HasMaxLength(60);
 
         builder.Property(p => p.MonthlyPrice)
+              .IsRequired()
             .HasColumnType("decimal(18,2)");
+
+        builder.Property(p => p.RequestPrice)
+              .IsRequired()
+           .HasColumnType("decimal(18,2)");
+
+        builder.Property(p => p.PricingType)
+            
+              .IsRequired();
+
 
         builder.Property(p => p.IsUnlimited)
             .IsRequired();

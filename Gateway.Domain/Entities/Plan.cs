@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Gateway.Domain.Enums;
+using System.ComponentModel;
 using System.Numerics;
 
 namespace Gateway.Domain.Entities;
@@ -12,6 +13,8 @@ public class Plan : BaseEntity
     public string Description { get; set; } = string.Empty;
 
     public decimal MonthlyPrice { get; set; }
+    public decimal RequestPrice { get; set; }
+    public PricingType   PricingType{ get; set; }
 
     public ICollection<PlanRoute> PlanRoutes { get; set; } = new List<PlanRoute>();
     public ICollection<Contract> CompanyPlans { get; set; } = new List<Contract>();

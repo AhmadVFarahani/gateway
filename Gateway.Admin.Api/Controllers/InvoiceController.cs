@@ -16,7 +16,7 @@ public class InvoiceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() =>
+    public async Task<IActionResult> GetAll() => 
         Ok(await _service.GetAllAsync());
 
     [HttpGet("{id:long}")]

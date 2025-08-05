@@ -277,6 +277,12 @@ namespace Gateway.Persistence.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
+                    b.Property<int>("PricingType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RequestPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 

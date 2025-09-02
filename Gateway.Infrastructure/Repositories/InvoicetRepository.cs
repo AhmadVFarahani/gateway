@@ -1,5 +1,6 @@
 ﻿using Gateway.Domain.Entities;
 using Gateway.Domain.Interfaces;
+using Gateway.Domain.Views;
 using Gateway.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +15,14 @@ public class InvoiceRepository : IInvoiceRepository
         _context = context;
     }
 
-    public async Task<Invoice?> GetByIdAsync(long id) =>
-        await _context.Invoices.Include(c=>c.Items).FirstOrDefaultAsync (c=>c.Id==id);
+    public async Task<InvoiceView?> GetByIdAsync(long id)
+    {
+        var invoice =await _context.InvoiceViews.AsNoTracking().Where(x => x.Id == id).SingleAsync();
+        invoice.Items = await _context.InvoiceItemViews.AsNoTracking().Where(c=>c.InvoiceId==id).ToListAsync(); 
+        return invoice;
+    }
 
-    public async Task<IEnumerable<Invoice>> GetAllAsync() =>
-        await _context.Invoices.ToListAsync();
+    public async Task<IEnumerable<InvoiceView>> GetAllAsync() =>
+        await _context.InvoiceViews.AsNoTracking().ToListAsync();
    
 }

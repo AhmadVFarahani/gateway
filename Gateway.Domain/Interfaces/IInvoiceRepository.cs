@@ -1,9 +1,10 @@
 ﻿using Gateway.Domain.Entities;
+using Gateway.Domain.Views;
 
 namespace Gateway.Domain.Interfaces;
 
 public interface IInvoiceRepository
 {
-    Task<Invoice?> GetByIdAsync(long id);
-    Task<IEnumerable<Invoice>> GetAllAsync();
+    Task<InvoiceView?> GetByIdAsync(long id);
+    Task<IEnumerable<InvoiceView>> GetAllAsync();
 }

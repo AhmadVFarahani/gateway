@@ -1,10 +1,14 @@
 ﻿using Gateway.Application.Invoice.Dtos;
+using Gateway.Domain.Views;
 
 namespace Gateway.Application.Interfaces;
 
 public interface IInvoiceService
 {
-    Task<InvoiceDto?> GetByIdAsync(long id);
+    Task<InvoiceView?> GetByIdAsync(long id);
     Task<IEnumerable<InvoiceListDto>> GetAllAsync();
-   
+
+    Task<byte[]> ExportToExcel();
+
+
 }

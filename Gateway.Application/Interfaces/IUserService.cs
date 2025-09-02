@@ -12,7 +12,7 @@ public interface IUserService
     Task<long> CreateAsync(CreateUserRequest request);
     Task UpdateAsync(long id, UpdateUserRequest request);
     Task DeleteAsync(long id);
-
+    Task<byte[]> ExportToExcel();
 
     #region AccessPolicies
     Task<IEnumerable<AccessPolicyDto>> GetAccessPoliciesAsync(long userId);

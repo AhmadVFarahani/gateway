@@ -10,7 +10,7 @@ public interface ICompanyService
     Task<long> CreateAsync(CreateCompanyRequest request);
     Task UpdateAsync(long id, UpdateCompanyRequest request);
     Task DeleteAsync(long id);
-
+    Task<byte[]> ExportToExcel();
     #region Plan
     Task<IEnumerable<ContractDto>> GetCompanyPlanssAsync(long companyId);
     Task<ContractDto> GetCompanyPlanByIdsAsync(long companyId, long companyPlanId);

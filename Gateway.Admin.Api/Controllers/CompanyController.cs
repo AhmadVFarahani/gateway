@@ -49,6 +49,15 @@ public class CompanyController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("export")]
+    public async Task<IActionResult> ExportInvoices()
+    {
+        var fileBytes = await _service.ExportToExcel();
+
+        return File(fileBytes,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Invoices.xlsx");
+    }
 
     #region Plan
     [HttpGet("{companyId}/plans")]

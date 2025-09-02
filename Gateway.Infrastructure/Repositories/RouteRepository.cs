@@ -20,12 +20,12 @@ public class RouteRepository : IRouteRepository
 
     public async Task<IEnumerable<Route>> GetAllAsync()
     {
-        return await _context.Routes.ToListAsync();
+        return await _context.Routes.Include(c=>c.Service).ToListAsync();
     }
 
     public async Task<IEnumerable<Route>> GetByServiceId(long serviceId)
     {
-        return await _context.Routes.Where(c=>c.ServiceId==serviceId).ToListAsync();
+        return await _context.Routes.Include(c=>c.Service).Where(c=>c.ServiceId==serviceId).ToListAsync();
     }
 
     public async Task AddAsync(Route route)
@@ -49,5 +49,13 @@ public class RouteRepository : IRouteRepository
     {
         return await _context.Routes
             .FirstOrDefaultAsync(r => r.Path.ToLower() == path.ToLower());
+    }
+
+    public async Task<Route?> GetByIdWithFieldsAsync(long id)
+    {
+        return await _context.Routes
+            .Include(c => c.ResponseFields)
+            .Include(c => c.RequestFields)
+            .FirstOrDefaultAsync(c => c.Id == id); 
     }
 }

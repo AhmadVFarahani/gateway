@@ -9,4 +9,6 @@ public interface IContractService
     Task<long> CreateAsync(CreateContractRequest request);
     Task UpdateAsync(long id, UpdateContractRequest request);
     Task DeleteAsync(long id);
+
+    Task<byte[]> ExportToExcel();
 }

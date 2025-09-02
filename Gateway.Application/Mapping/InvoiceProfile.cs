@@ -9,6 +9,9 @@ public class InvoiceProfile : Profile
     {
         CreateMap<Domain.Entities.Invoice, InvoiceDto>().ReverseMap();
         CreateMap<Domain.Entities.Invoice, InvoiceListDto>().ReverseMap();
+        CreateMap<Domain.Views.InvoiceView, InvoiceListDto>().ReverseMap();
+        CreateMap<Domain.Views.InvoiceItemView, InvoiceItemDto>().ReverseMap();
+
         CreateMap<Domain.Entities.InvoiceItem, InvoiceItemDto>().ReverseMap();
     }
 }

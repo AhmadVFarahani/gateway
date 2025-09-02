@@ -4,6 +4,7 @@ public class CreateContractRequest
 {
     public long PlanId { get; set; }
     public long CompanyId { get; set; }
+    public string Description { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public bool AutoRenew { get; set; }

@@ -12,6 +12,11 @@ public class ContractConfiguration : IEntityTypeConfiguration<Contract>
 
         builder.HasKey(cp => cp.Id);
 
+        builder.Property(cp => cp.Description)
+            .IsRequired()
+            .HasDefaultValue("-")
+            .HasMaxLength(100);
+
         builder.HasOne(cp => cp.Company)
             .WithMany(c=>c.CompanyPlans)
             .HasForeignKey(cp => cp.CompanyId);

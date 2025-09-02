@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ClosedXML.Excel;
 using Gateway.Application.Company.Dtos;
 using Gateway.Application.Contract.Dtos;
 using Gateway.Application.Interfaces;
@@ -63,7 +64,38 @@ public class CompanyService : ICompanyService
         await _repository.DeleteAsync(company);
     }
 
+    public async Task<byte[]> ExportToExcel()
+    {
+        var companies = (await _repository.GetAllAsync()).ToList();
 
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Invoices");
+
+        // Header
+        worksheet.Cell(1, 1).Value = "Name";
+        worksheet.Cell(1, 2).Value = "Description";
+        worksheet.Cell(1, 3).Value = "IsActive";
+        worksheet.Cell(1, 4).Value = "CreatedAt";
+
+        // Data
+        for (int i = 0; i < companies.Count; i++)
+        {
+            var row = i + 2;
+            var inv = companies[i];
+
+            worksheet.Cell(row, 1).Value = inv.Name;
+            worksheet.Cell(row, 2).Value = inv.Description;
+            worksheet.Cell(row, 3).Value = inv.IsActive;
+            worksheet.Cell(row, 4).Value = inv.CreatedAt;
+        }
+
+        // Auto-size columns
+        worksheet.Columns().AdjustToContents();
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        return stream.ToArray();
+    }
 
 
 

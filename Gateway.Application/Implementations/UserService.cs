@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ClosedXML.Excel;
 using Gateway.Application.AccessPolicies.Dtos;
 using Gateway.Application.ApiKeys;
 using Gateway.Application.Interfaces;
@@ -82,7 +83,40 @@ public class UserService : IUserService
 
         await _repository.DeleteAsync(user);
     }
+    public async Task<byte[]> ExportToExcel()
+    {
+        var users = (await _repository.GetAllAsync()).ToList();
 
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Invoices");
+
+        // Header
+        worksheet.Cell(1, 1).Value = "CompanyId";
+        worksheet.Cell(1, 2).Value = "UserName";
+        worksheet.Cell(1, 3).Value = "IsActive";
+        worksheet.Cell(1, 4).Value = "UserType";
+        worksheet.Cell(1, 5).Value = "RoleId";
+
+        // Data
+        for (int i = 0; i < users.Count; i++)
+        {
+            var row = i + 2;
+            var inv = users[i];
+
+            worksheet.Cell(row, 1).Value = inv.CompanyId;
+            worksheet.Cell(row, 2).Value = inv.UserName;
+            worksheet.Cell(row, 3).Value = inv.IsActive;
+            worksheet.Cell(row, 4).Value = inv.UserType.ToString();
+            worksheet.Cell(row, 6).Value = inv.RoleId;
+        }
+
+        // Auto-size columns
+        worksheet.Columns().AdjustToContents();
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        return stream.ToArray();
+    }
     private static string HashPassword(string password)
     {
         using var sha256 = SHA256.Create();

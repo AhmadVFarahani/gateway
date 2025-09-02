@@ -17,4 +17,15 @@ public class Route:BaseEntity
 
     public ICollection<PlanRoute> PlanRoutes { get; set; } = new List<PlanRoute>();
 
+
+    public void addResponseFields(RouteResponseField response)
+    {
+        ResponseFields.Add(response);
+    }
+
+    public void addRequestFields(RouteRequestField request)
+    {
+        RequestFields.Add(request);
+    }
+
 }

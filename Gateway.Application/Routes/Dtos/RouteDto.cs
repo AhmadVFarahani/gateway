@@ -9,6 +9,7 @@ public class RouteDto:BaseDto
     public HttpMethodEnum HttpMethod { get; set; }
     public string TargetPath { get; set; } = string.Empty;
     public long ServiceId { get; set; }
+    public string ServiceName { get; set; } = string.Empty;
     public bool RequiresAuthentication { get; set; }
     public bool IsActive { get; set; }
 }

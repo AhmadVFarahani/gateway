@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using Gateway.Application.Interfaces;
+using ClosedXML.Excel;
 using Gateway.Application.Contract.Dtos;
+using Gateway.Application.Interfaces;
 using Gateway.Domain.Interfaces;
 
 namespace Gateway.Application.Implementations;
@@ -35,6 +36,7 @@ public class ContractService : IContractService
         {
             AutoRenew = request.AutoRenew,
             CompanyId = request.CompanyId,
+            Description = request.Description,
             EndDate = request.EndDate,
             IsActive = request.IsActive,
             PlanId = request.PlanId,
@@ -54,6 +56,7 @@ public class ContractService : IContractService
 
         contract.AutoRenew = request.AutoRenew;
         contract.CompanyId = request.CompanyId;
+        contract.Description= request.Description;
         contract.EndDate = request.EndDate;
         contract.IsActive = request.IsActive;
         contract.PlanId = request.PlanId;
@@ -68,5 +71,44 @@ public class ContractService : IContractService
             ?? throw new KeyNotFoundException("Contract not found");
 
         await _repository.DeleteAsync(user);
+    }
+
+    public async Task<byte[]> ExportToExcel()
+    {
+        var contarcts = (await _repository.GetAllAsync()).ToList();
+        
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Contracts");
+
+        // Header
+        worksheet.Cell(1, 1).Value = "CompanyId";
+        worksheet.Cell(1, 2).Value = "PlanId";
+        worksheet.Cell(1, 3).Value = "StartDate";
+        worksheet.Cell(1, 4).Value = "EndDate";
+        worksheet.Cell(1, 5).Value = "AutoRenew";
+        worksheet.Cell(1, 6).Value = "IsActive";
+        worksheet.Cell(1, 7).Value = "Description";
+
+        // Data
+        for (int i = 0; i < contarcts.Count; i++)
+        {
+            var row = i + 2;
+            var inv = contarcts[i];
+
+            worksheet.Cell(row, 1).Value = inv.CompanyId;
+            worksheet.Cell(row, 2).Value = inv.PlanId;
+            worksheet.Cell(row, 3).Value = inv.StartDate;
+            worksheet.Cell(row, 4).Value = inv.EndDate;
+            worksheet.Cell(row, 5).Value = inv.AutoRenew;
+            worksheet.Cell(row, 6).Value = inv.IsActive;
+            worksheet.Cell(row, 7).Value = inv.Description;
+        }
+
+        // Auto-size columns
+        worksheet.Columns().AdjustToContents();
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        return stream.ToArray();
     }
 }

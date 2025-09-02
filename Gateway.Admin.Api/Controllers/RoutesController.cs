@@ -1,7 +1,9 @@
 ﻿using Gateway.Application.Interfaces;
 using Gateway.Application.Routes.Dtos;
+using Gateway.Application.RouteScopes.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Gateway.Admin.Api.Controllers
 {
@@ -53,5 +55,46 @@ namespace Gateway.Admin.Api.Controllers
             await _service.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportInvoices()
+        {
+            var fileBytes = await _service.ExportToExcel();
+
+            return File(fileBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Invoices.xlsx");
+        }
+
+        #region Fields
+        [HttpPost("{routeId:long}/SaveResponseFields")]
+        public async Task<IActionResult> SaveResponseFields(long routeId, List<RouteResponseFieldDto> fields)
+        {
+            await _service.SaveResponseFieldsAsync(routeId, fields);
+            return NoContent();
+        }
+        [HttpGet("{routeId:long}/RequestFields")]
+        public async Task<IActionResult> GetRequestFields(long routeId)
+        {
+            var tree = await _service.GetRequestSchemaAsync(routeId);
+            if (tree == null || tree.Count == 0) return NotFound(new { message = "No request schema found." });
+            return Ok(tree);
+        }
+
+
+        [HttpPost("{routeId:long}/SaveRequestFields")]
+        public async Task<IActionResult> SaveRequestFields(long routeId, List<RouteRequestFieldDto> fields)
+        {
+            await _service.SaveRequestFieldsAsync(routeId, fields);
+            return NoContent();
+        }
+        [HttpGet("{routeId:long}/ResponseFields")]
+        public async Task<IActionResult> GetResponseFields(long routeId)
+        {
+            var tree = await _service.GetResponseSchemaAsync(routeId);
+            if (tree == null || tree.Count == 0) return NotFound(new { message = "No response schema found." });
+            return Ok(tree);
+        }
+        #endregion Fields
     }
 }

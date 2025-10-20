@@ -14,11 +14,14 @@ public class ScopeAuthorizationMiddleware
     public async Task InvokeAsync(HttpContext context,
         IRouteRepository routeRepository
          )
-    {
+    { 
+        
         if (context.User.Identity?.IsAuthenticated != true)
         {
-            await _next(context);
+            context.Response.StatusCode = 401;
+            await context.Response.WriteAsync("Unauthorized");
             return;
+          
         }
 
         var userId = context.User.FindFirst("UserId")?.Value;

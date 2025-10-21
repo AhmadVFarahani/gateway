@@ -1,7 +1,8 @@
-using Gateway.Application.Implementations;
+﻿using Gateway.Application.Implementations;
 using Gateway.Application.Implementations.Cache;
 using Gateway.Application.Interfaces;
 using Gateway.Application.Interfaces.Cache;
+using Gateway.Application.Yarp;
 using Gateway.Domain.Interfaces;
 using Gateway.Infrastructure.Repositories;
 using Gateway.Persistence;
@@ -11,14 +12,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+#region 🔹 Database (EF Core)
 builder.Services.AddDbContext<GatewayDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+#endregion
 
+#region 🔹 Repositories
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -29,11 +33,14 @@ builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 builder.Services.AddScoped<IAccessPolicyRepository, AccessPolicyRepository>();
 builder.Services.AddScoped<IRouteScopeRepository, RouteScopeRepository>();
 builder.Services.AddScoped<IPlanRouteRepository, PlanRouteRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+#endregion
 
-// AutoMapper
+#region 🔹 AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+#endregion
 
-// JWT Authentication Setup
+#region 🔹 JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -45,65 +52,58 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? throw new Exception("Missing secret"))),
+                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? throw new Exception("Missing Jwt SecretKey")))
         };
     });
+#endregion
 
+#region 🔹 Redis & Caching
+var redisConnection = builder.Configuration.GetConnectionString("Redis")
+                       ?? throw new Exception("Missing Redis connection string");
 
-// Redis Connection Multiplexer
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-{
-    var configuration = builder.Configuration.GetConnectionString("Redis");
-    return ConnectionMultiplexer.Connect(configuration);
-});
+// Redis connection (singleton)
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect(redisConnection));
 
-// Distributed Cache
+// Distributed cache via Redis
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.Configuration = redisConnection;
     options.InstanceName = "AkamGateway:";
 });
 
-// Memory cache
+// Memory cache (local per instance)
 builder.Services.AddMemoryCache();
 
-//Cache Loader
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")));
+// Hybrid cache (Memory + Redis)
+builder.Services.AddScoped<IHybridCacheService, HybridCacheService>();
 
+// Redis Pub/Sub Listener
+builder.Services.AddHostedService<RedisSubscriberService>();
+#endregion
+
+#region 🔹 Cache Warmup (Business cache)
 builder.Services.AddScoped<ICacheLoader, CacheLoader>();
 builder.Services.AddScoped<ICacheRefresher, CacheRefresher>();
 builder.Services.AddHostedService<CacheWarmupHostedService>();
+#endregion
+
+#region 🔹 YARP Configuration
+builder.Services.AddSingleton<DynamicYarpConfigProvider>();
+builder.Services.AddSingleton<IProxyConfigProvider>(sp => sp.GetRequiredService<DynamicYarpConfigProvider>());
+builder.Services.AddReverseProxy();
+builder.Services.AddHostedService<YarpRoutesWarmupService>(); // Warmup Redis → reload YARP
 
 
+#endregion
 
-// Redis connection & distributed cache
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-{
-    var cs = builder.Configuration.GetConnectionString("Redis"); 
-    return ConnectionMultiplexer.Connect(cs);
-});
-builder.Services.AddStackExchangeRedisCache(o =>
-{
-    o.Configuration = builder.Configuration.GetConnectionString("Redis");
-    o.InstanceName = builder.Configuration.GetSection("Cache")?["InstanceName"] ?? "AkamGateway:";
-});
-
-// Hybrid cache
-builder.Services.AddScoped<IHybridCacheService, HybridCacheService>();
-
-// Redis Pub/Sub Subscriber
-builder.Services.AddHostedService<RedisSubscriberService>();
-
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+#region 🔹 Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Gateway Public API", Version = "v1" });
 
-    // Add JWT Bearer definition
+    // JWT Bearer Support
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -111,7 +111,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Enter your JWT token below (without 'Bearer ')"
+        Description = "Enter JWT token below (without 'Bearer ')"
     });
 
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -129,25 +129,34 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+#endregion
 
+builder.Services.AddControllers();
 
-builder.Services.AddScoped<ICacheService, RedisCacheService>();
-
+#region 🔹 Build app
 var app = builder.Build();
+#endregion
 
-// Configure the HTTP request pipeline.
+#region 🔹 Pipeline Configuration
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Gateway Middlewares (custom logic)
 app.UseMiddleware<AccessAuthorizationMiddleware>();
 app.UseMiddleware<PlanValidationMiddleware>();
+app.UseMiddleware<ForwardPreviewLoggingMiddleware>();
+// YARP Reverse Proxy (MUST be last before MapControllers)
+app.MapReverseProxy();
 
+// Controllers (optional for admin/test APIs)
 app.MapControllers();
 
 app.Run();
+#endregion

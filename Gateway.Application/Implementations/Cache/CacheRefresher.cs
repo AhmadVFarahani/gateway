@@ -63,4 +63,36 @@ public class CacheRefresher : ICacheRefresher
         batch.Execute();
         _logger.LogInformation("Business cache refreshed in Redis.");
     }
+
+    // 🔹 YARP ROUTE/SERVICE CACHE
+    public async Task RefreshYarpCacheAsync(CancellationToken ct = default)
+    {
+        var db = _redis.GetDatabase();
+        _logger.LogInformation("Refreshing YARP route/service cache...");
+
+        var data = await _loader.LoadYarpDataAsync(ct);
+
+        if (!data.Routes.Any() || !data.Services.Any())
+        {
+            _logger.LogWarning("⚠️ No routes or services found in database.");
+            return;
+        }
+
+        // Routes → Hash (routes)
+        foreach (var r in data.Routes)
+        {
+            await db.HashSetAsync("routes", r.Id.ToString(),
+                JsonSerializer.Serialize(r, _jsonOptions));
+        }
+
+        // Services → Hash (services)
+        foreach (var s in data.Services)
+        {
+            await db.HashSetAsync("services", s.Id.ToString(),
+                JsonSerializer.Serialize(s, _jsonOptions));
+        }
+
+        _logger.LogInformation("✅ YARP route/service cache stored in Redis: {RouteCount} routes, {ServiceCount} services",
+            data.Routes.Count, data.Services.Count);
+    }
 }

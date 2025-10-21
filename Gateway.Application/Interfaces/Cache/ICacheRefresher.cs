@@ -4,4 +4,5 @@ public interface ICacheRefresher
 {
     Task RefreshAuthorizationCacheAsync(CancellationToken ct = default);
     Task RefreshBusinessCacheAsync(CancellationToken ct = default);
+    Task RefreshYarpCacheAsync(CancellationToken ct = default);
 }

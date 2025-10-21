@@ -6,4 +6,5 @@ public interface ICacheLoader
 {
     Task<GatewayConfigCache> LoadAuthorizationDataAsync(CancellationToken ct = default);
     Task<GatewayPlanCache> LoadBusinessDataAsync(CancellationToken ct = default);
+    Task<YarpRoteConfigCache> LoadYarpDataAsync(CancellationToken ct = default);
 }

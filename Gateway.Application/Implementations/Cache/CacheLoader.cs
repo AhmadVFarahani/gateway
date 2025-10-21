@@ -8,6 +8,7 @@ using Gateway.Application.Plan.Dtos;
 using Gateway.Application.Routes.Dtos;
 using Gateway.Application.RouteScopes.Dtos;
 using Gateway.Application.Scopes;
+using Gateway.Application.Services.Dtos;
 using Gateway.Application.Users;
 using Gateway.Domain.Interfaces;
 
@@ -20,13 +21,14 @@ public class CacheLoader : ICacheLoader
     private readonly IScopeRepository _scopes;
     private readonly IRouteRepository _routes;
     private readonly IContractRepository _contracts;
+    private readonly IServiceRepository _service;
     private readonly IPlanRepository _plans;
     private readonly IAccessPolicyRepository _policies;
     private readonly IRouteScopeRepository _routeScopes;
     private readonly IPlanRouteRepository _planRoute;
     private readonly IMapper _mapper;
 
-    public CacheLoader(IUserRepository users, IApiKeyRepository keys, IScopeRepository scopes, IRouteRepository routes, IContractRepository contracts, IPlanRepository plans, IMapper mapper, IAccessPolicyRepository policies, IRouteScopeRepository routeScopes, IPlanRouteRepository planRoute)
+    public CacheLoader(IUserRepository users, IApiKeyRepository keys, IScopeRepository scopes, IRouteRepository routes, IContractRepository contracts, IPlanRepository plans, IMapper mapper, IAccessPolicyRepository policies, IRouteScopeRepository routeScopes, IPlanRouteRepository planRoute, IServiceRepository service)
     {
         _users = users;
         _keys = keys;
@@ -38,6 +40,7 @@ public class CacheLoader : ICacheLoader
         _policies = policies;
         _routeScopes = routeScopes;
         _planRoute = planRoute;
+        _service = service;
     }
 
     public async Task<GatewayConfigCache> LoadAuthorizationDataAsync(CancellationToken ct = default)
@@ -62,6 +65,8 @@ public class CacheLoader : ICacheLoader
         var routeScopes = await _routeScopes.GetAllAsync();
         cache.RouteScopes = _mapper.Map<IEnumerable<RouteScopeDto>>(routeScopes).ToList();
 
+     
+
         return cache;
     }
 
@@ -77,6 +82,19 @@ public class CacheLoader : ICacheLoader
 
         var planRoutes = await _planRoute.GetAllAsync();
         cache.PlanRoutes = _mapper.Map<IEnumerable<PlanRouteDto>>(planRoutes).ToList();
+
+        return cache;
+    }
+
+    public async Task<YarpRoteConfigCache> LoadYarpDataAsync(CancellationToken ct = default)
+    {
+        var cache = new YarpRoteConfigCache();
+        
+        var routes = await _routes.GetAllAsync();
+        cache.Routes = _mapper.Map<IEnumerable<RouteDto>>(routes).ToList();
+
+        var services = await _service.GetAllAsync();
+        cache.Services = _mapper.Map<IEnumerable<ServiceDto>>(services).ToList();
 
         return cache;
     }

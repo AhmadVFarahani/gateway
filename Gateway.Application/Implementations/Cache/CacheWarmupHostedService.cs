@@ -25,6 +25,7 @@ public class CacheWarmupHostedService : BackgroundService
 
         await refresher.RefreshAuthorizationCacheAsync(stoppingToken);
         await refresher.RefreshBusinessCacheAsync(stoppingToken);
+        await refresher.RefreshYarpCacheAsync(stoppingToken);
 
         _logger.LogInformation("Cache warm-up completed successfully.");
     }

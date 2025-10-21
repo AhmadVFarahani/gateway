@@ -5,7 +5,7 @@ using Gateway.Application.Interfaces.Cache;
 using Gateway.Domain.Interfaces;
 using Gateway.Infrastructure.Repositories;
 using Gateway.Persistence;
-using Gateway.Public.Api.Middleware;
+using Gateway.Public.Api.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -145,7 +145,8 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.UseMiddleware<ScopeAuthorizationMiddleware>();
+app.UseMiddleware<AccessAuthorizationMiddleware>();
+app.UseMiddleware<PlanValidationMiddleware>();
 
 app.MapControllers();
 

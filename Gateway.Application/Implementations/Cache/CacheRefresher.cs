@@ -52,7 +52,7 @@ public class CacheRefresher : ICacheRefresher
         var batch = db.CreateBatch();
 
         foreach (var contract in data.Contracts)
-            batch.StringSetAsync($"contract:{contract.Id}", JsonSerializer.Serialize(contract, _jsonOptions));
+            batch.StringSetAsync($"contract:{contract.CompanyId}:{contract.Id}", JsonSerializer.Serialize(contract, _jsonOptions));
 
         foreach (var plan in data.Plans)
             batch.StringSetAsync($"plan:{plan.Id}", JsonSerializer.Serialize(plan, _jsonOptions));

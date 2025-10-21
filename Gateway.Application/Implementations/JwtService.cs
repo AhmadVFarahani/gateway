@@ -29,6 +29,7 @@ public class JwtService: IJwtService
         {
             new Claim("UserId", user.Id.ToString()),
             new Claim("ApiKeyId", apiKey.Id.ToString()),
+            new Claim("CompanyId", user.CompanyId.ToString()),
             new Claim("Role", user.UserType.ToString()), // Admin or Client
         };
 

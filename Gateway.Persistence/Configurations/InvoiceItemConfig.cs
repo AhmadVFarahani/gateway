@@ -15,17 +15,17 @@ public class InvoiceItemConfig : IEntityTypeConfiguration<InvoiceItem>
         builder.Property(x => x.RouteId).IsRequired(false);
 
         builder.Property(x => x.TierDetails)
-               .HasColumnType("nvarchar(max)");
+               .HasColumnType("nvarchar(200)");
 
         builder.Property(x => x.UsageCount)
                .IsRequired();
 
         builder.Property(x => x.UnitPrice)
                .IsRequired()
-               .HasColumnType("decimal(18,2)");
+               .HasPrecision(18, 2);
 
         builder.Property(x => x.SubTotal)
                .IsRequired()
-               .HasColumnType("decimal(18,2)");
+               .HasPrecision(18, 2);
     }
 }

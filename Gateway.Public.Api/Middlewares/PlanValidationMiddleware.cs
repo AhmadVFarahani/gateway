@@ -134,6 +134,11 @@ public class PlanValidationMiddleware
             "Plan validated. UserId={UserId}, CompanyId={CompanyId}, RouteId={RouteId}, ContractId={ContractId}, PlanId={PlanId}, Path={Path}",
             userId, companyId, route.Id, allowedContractId, allowedPlanId, requestPath);
 
+        //add to context for later middlewares
+        context.Items["CompanyId"] = companyId;
+        context.Items["ContractId"] = allowedContractId;
+        context.Items["PlanId"] = allowedPlanId;
+
         await _next(context);
     }
 

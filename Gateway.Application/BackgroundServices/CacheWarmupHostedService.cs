@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Gateway.Application.Implementations.Cache;
+namespace Gateway.Application.BackgroundServices;
 
 public class CacheWarmupHostedService : BackgroundService
 {

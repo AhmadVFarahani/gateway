@@ -1,5 +1,6 @@
 ﻿using Gateway.Application.Routes.Dtos;
 using Gateway.Application.Services.Dtos;
+using Gateway.Application.Yarp;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ using System.Text.Json;
 /// Loads Route + Service data from Redis, joins them, and stores in memory for YARP.
 /// </summary>
 
-namespace Gateway.Application.Yarp;
+namespace Gateway.Application.BackgroundServices;
 
 /// <summary>
 /// Loads all Route + Service data from Redis, builds route forwarding cache,

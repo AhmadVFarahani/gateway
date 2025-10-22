@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Microsoft.Extensions.Hosting;
 
-namespace Gateway.Application.Implementations.Cache;
+namespace Gateway.Application.BackgroundServices;
 
 public class RedisSubscriberService : BackgroundService
 {
@@ -50,7 +50,7 @@ public class RedisSubscriberService : BackgroundService
                     {
                         var key = e.Key?.ToString() ?? "";
                         if (key.StartsWith(instancePrefix + pattern, StringComparison.OrdinalIgnoreCase) ||
-                            (pattern.EndsWith("*") && key.StartsWith(instancePrefix + pattern.TrimEnd('*'), StringComparison.OrdinalIgnoreCase)))
+                            pattern.EndsWith("*") && key.StartsWith(instancePrefix + pattern.TrimEnd('*'), StringComparison.OrdinalIgnoreCase))
                         {
                             toRemove.Add(e.Key!);
                         }

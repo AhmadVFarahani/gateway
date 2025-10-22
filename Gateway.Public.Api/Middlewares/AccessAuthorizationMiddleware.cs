@@ -42,6 +42,9 @@ public class AccessAuthorizationMiddleware
         var userId = GetLongClaim(context, "UserId");
         var apiKeyId = GetLongClaim(context, "ApiKeyId");
 
+       
+
+
         if (userId == 0)
         {
             await RejectAsync(context, 401, "Error Code 10001 - Missing UserId");
@@ -54,7 +57,7 @@ public class AccessAuthorizationMiddleware
             return;
         }
 
-        // 4️⃣ Validate ApiKey ownership
+       // 4️⃣ Validate ApiKey ownership
         var apiKey = config.ApiKeys.FirstOrDefault(k => k.Id == apiKeyId && k.UserId == userId && k.IsActive);
         if (apiKey == null)
         {
@@ -103,6 +106,15 @@ public class AccessAuthorizationMiddleware
             await RejectAsync(context, 403, "Error Code 10007 - Scope mismatch");
             return;
         }
+
+
+        //add to context for later middlewares
+        context.Items["UserId"] = userId;
+        context.Items["ApiKeyId"] = apiKeyId;
+        context.Items["RouteId"] = route.Id;
+        context.Items["UserId"] = userId;
+        context.Items["KeyId"] = apiKeyId;
+
 
         // ✅ Access granted
         _logger.LogInformation(

@@ -1,7 +1,9 @@
-﻿using Gateway.Application.Implementations;
+﻿using Gateway.Application.BackgroundServices;
+using Gateway.Application.Implementations;
 using Gateway.Application.Implementations.Cache;
 using Gateway.Application.Interfaces;
 using Gateway.Application.Interfaces.Cache;
+using Gateway.Application.Usage;
 using Gateway.Application.Yarp;
 using Gateway.Domain.Interfaces;
 using Gateway.Infrastructure.Repositories;
@@ -34,6 +36,7 @@ builder.Services.AddScoped<IAccessPolicyRepository, AccessPolicyRepository>();
 builder.Services.AddScoped<IRouteScopeRepository, RouteScopeRepository>();
 builder.Services.AddScoped<IPlanRouteRepository, PlanRouteRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IUsageLogRepository, UsageLogRepository>();
 #endregion
 
 #region 🔹 AutoMapper
@@ -80,6 +83,14 @@ builder.Services.AddScoped<IHybridCacheService, HybridCacheService>();
 
 // Redis Pub/Sub Listener
 builder.Services.AddHostedService<RedisSubscriberService>();
+#endregion
+
+#region 🔹 Usage Log Queue (Meta Data Log)
+builder.Services.Configure<UsageLogSettings>(
+    builder.Configuration.GetSection("UsageLogSettings"));
+
+builder.Services.AddSingleton<IUsageLogQueueService, UsageLogQueueService>();
+builder.Services.AddHostedService<UsageLogBackgroundService>();
 #endregion
 
 #region 🔹 Cache Warmup (Business cache)
@@ -152,6 +163,7 @@ app.UseAuthorization();
 app.UseMiddleware<AccessAuthorizationMiddleware>();
 app.UseMiddleware<PlanValidationMiddleware>();
 app.UseMiddleware<ForwardPreviewLoggingMiddleware>();
+app.UseMiddleware<UsageLoggingMiddleware>();
 // YARP Reverse Proxy (MUST be last before MapControllers)
 app.MapReverseProxy();
 

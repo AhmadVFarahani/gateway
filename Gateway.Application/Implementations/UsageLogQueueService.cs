@@ -9,16 +9,24 @@ namespace Gateway.Application.Implementations;
 
 /// <summary>
 /// Thread-safe, bounded in-memory queue for collecting UsageLogEvent objects.
+/// Includes Prometheus metrics for queue length and dropped events.
 /// </summary>
 public class UsageLogQueueService : IUsageLogQueueService
 {
     private readonly ILogger<UsageLogQueueService> _logger;
     private readonly Channel<UsageLog> _channel;
     private readonly int _capacity;
+    private readonly IMetricsService _metrics;
 
-    public UsageLogQueueService(IOptions<UsageLogSettings> options, ILogger<UsageLogQueueService> logger)
+    private int _currentCount = 0; // manual counter for current queue length
+
+    public UsageLogQueueService(
+        IOptions<UsageLogSettings> options,
+        ILogger<UsageLogQueueService> logger,
+        IMetricsService metrics)
     {
         _logger = logger;
+        _metrics = metrics;
         _capacity = options.Value.QueueCapacity;
 
         // Create a bounded channel to prevent memory overflow
@@ -26,8 +34,7 @@ public class UsageLogQueueService : IUsageLogQueueService
         {
             SingleReader = true,
             SingleWriter = false,
-            //FullMode = BoundedChannelFullMode.DropOldest // drop oldest to prevent blocking
-            FullMode = BoundedChannelFullMode.Wait // backpressure
+            FullMode = BoundedChannelFullMode.Wait // Apply backpressure
         };
 
         _channel = Channel.CreateBounded<UsageLog>(channelOptions);
@@ -41,11 +48,15 @@ public class UsageLogQueueService : IUsageLogQueueService
     {
         if (!_channel.Writer.TryWrite(logEvent))
         {
-            _logger.LogWarning("Usage log queue is full — dropping oldest event (capacity {Capacity})", _capacity);
+            // Queue full - increment drop counter
+            _metrics.IncQueueDrop();
+            _logger.LogWarning("Usage log queue is full — dropping event (capacity {Capacity})", _capacity);
             return;
         }
 
-        await Task.CompletedTask; // maintain async signature
+        Interlocked.Increment(ref _currentCount);
+        _metrics.SetQueueLength(_currentCount);
+        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -57,17 +68,24 @@ public class UsageLogQueueService : IUsageLogQueueService
 
         try
         {
-            // Try to read the first item (waits until available or canceled)
+            // Wait for the first available item
             var firstItem = await _channel.Reader.ReadAsync(ct);
             items.Add(firstItem);
+            Interlocked.Decrement(ref _currentCount);
 
             // Drain additional items if available
             while (items.Count < maxItems && _channel.Reader.TryRead(out var item))
+            {
                 items.Add(item);
+                Interlocked.Decrement(ref _currentCount);
+            }
+
+            // Update gauge after batch read
+            _metrics.SetQueueLength(_currentCount);
         }
         catch (OperationCanceledException)
         {
-            // graceful shutdown
+            // Graceful shutdown
         }
         catch (Exception ex)
         {
@@ -77,4 +95,3 @@ public class UsageLogQueueService : IUsageLogQueueService
         return items;
     }
 }
-

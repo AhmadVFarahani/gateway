@@ -12,10 +12,12 @@ using Gateway.Public.Api.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Prometheus.DotNetRuntime;
 using StackExchange.Redis;
 using System.Text;
 using Yarp.ReverseProxy.Configuration;
-using Yarp.ReverseProxy.Forwarder;
+using Prometheus;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +61,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 #endregion
+
+
+#region Prometheus Metrics
+// OPTIONAL: register .NET runtime collectors (GC, threadpool, etc.)
+DotNetRuntimeStatsBuilder
+    .Customize()
+    .WithContentionStats()
+    .WithGcStats()
+    .WithThreadPoolStats()
+    .StartCollecting();
+
+// if you want to expose custom metrics via DI:
+builder.Services.AddSingleton<IMetricsService, MetricsService>();
+
+#endregion
+
 
 #region 🔹 Redis & Caching
 var redisConnection = builder.Configuration.GetConnectionString("Redis")
@@ -146,6 +164,16 @@ builder.Services.AddControllers();
 
 #region 🔹 Build app
 var app = builder.Build();
+#endregion
+
+
+#region 🔹 Metrics Endpoint
+// Add prometheus HTTP metrics middleware: it records request counts & durations
+app.UseHttpMetrics(); // records http_requests_total and http_request_duration_seconds
+
+// Map /metrics endpoint for Prometheus to scrape
+app.MapMetrics(); // exposes /metrics
+
 #endregion
 
 #region 🔹 Pipeline Configuration

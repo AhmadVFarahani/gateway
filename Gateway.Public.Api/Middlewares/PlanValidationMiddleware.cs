@@ -29,6 +29,13 @@ public class PlanValidationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        // Skip auth for Prometheus metrics endpoint
+        if (context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase))
+        {
+            await _next(context);
+            return;
+        }
+
         // 1) Must be authenticated (previous middleware should have validated JWT)
         if (context.User.Identity?.IsAuthenticated != true)
         {

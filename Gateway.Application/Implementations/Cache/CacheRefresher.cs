@@ -1,4 +1,5 @@
-﻿using Gateway.Application.Interfaces.Cache;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using Gateway.Application.Interfaces.Cache;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
@@ -36,7 +37,10 @@ public class CacheRefresher : ICacheRefresher
         var json = JsonSerializer.Serialize(data, _jsonOptions);
 
         await db.StringSetAsync(key, json);
-        _memory.Set(key, data, TimeSpan.FromMinutes(10));
+        _memory.Set(key, data, new MemoryCacheEntryOptions
+        {
+            Priority = CacheItemPriority.NeverRemove
+        });
 
         _logger.LogInformation("Authorization cache refreshed and stored in Redis + Memory.");
     }

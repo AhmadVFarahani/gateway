@@ -1,4 +1,5 @@
 ﻿using Gateway.Application.Cache;
+using Gateway.Application.Interfaces;
 using Gateway.Application.Routes.Dtos;
 using Gateway.Domain.Enums;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,19 +11,28 @@ public class AccessAuthorizationMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<AccessAuthorizationMiddleware> _logger;
     private readonly IMemoryCache _memory;
-
+    private readonly IMetricsService _metrics;
     public AccessAuthorizationMiddleware(
         RequestDelegate next,
         ILogger<AccessAuthorizationMiddleware> logger,
-        IMemoryCache memory)
+        IMemoryCache memory,
+        IMetricsService metrics)
     {
         _next = next;
         _logger = logger;
         _memory = memory;
+        _metrics = metrics;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
+        // Skip auth for Prometheus metrics endpoint
+        if (context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase))
+        {
+            await _next(context);
+            return;
+        }
+
         // 1️⃣ Ensure JWT authentication
         if (context.User.Identity?.IsAuthenticated != true)
         {
@@ -122,6 +132,22 @@ public class AccessAuthorizationMiddleware
             userId, apiKeyId, route.Path, requestMethod);
 
         await _next(context);
+
+        try
+        {
+           
+            var method = context.Request.Method;
+            var path = context.Request.Path.Value?.ToLowerInvariant() ?? "unknown";
+            var statusCode = context.Response.StatusCode.ToString();
+
+            _metrics.GatewayRequestCounter
+                .WithLabels(userId.ToString(), apiKeyId.ToString(), path, method, statusCode)
+                .Inc();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to record gateway request metric.");
+        }
     }
 
     // 🔹 Helper: Extract numeric claims safely

@@ -29,8 +29,8 @@ public class PlanValidationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        // Skip auth for Prometheus metrics endpoint
-        if (context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase))
+        // Skip auth for Prometheus metrics and internal endpoint
+        if (InternalRequestHelper.IsInternal(context))
         {
             await _next(context);
             return;

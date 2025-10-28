@@ -22,34 +22,45 @@ public class ForwardPreviewLoggingMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        // Skip auth for Prometheus metrics and internal endpoint
+        if (InternalRequestHelper.IsInternal(context))
+        {
+            await _next(context);
+            return;
+        }
         try
         {
             // ✅ Read route info from context safely
-            if (context.Items.TryGetValue("RouteInfo", out var routeObj) && routeObj is RouteForwardDto routeInfo)
+
+            if (context.Items.TryGetValue("RouteInfo", out var routeObj))
             {
-                var routes = _memory.Get<List<RouteForwardDto>>("gateway:routes:forward");
-                var dto = routes?.FirstOrDefault(r => r.Id == routeInfo.Id);
-
-                if (dto != null)
+                var routeInfo = routeObj as RouteDto;
+                if (routeInfo != null)
                 {
-                    string sourcePath = Normalize(dto.Path);
-                    string targetPath = Normalize(dto.TargetPath);
-                    string requestPath = Normalize(context.Request.Path.Value ?? "/");
-                    string query = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : "";
+                    var routes = _memory.Get<List<RouteForwardDto>>("gateway:routes:forward");
+                    var dto = routes?.FirstOrDefault(r => r.Id == routeInfo.Id);
 
-                    string targetUrl = BuildTargetUrl(dto.TargetBaseUrl, sourcePath, targetPath, requestPath, query);
+                    if (dto != null)
+                    {
+                        string sourcePath = Normalize(dto.Path);
+                        string targetPath = Normalize(dto.TargetPath);
+                        string requestPath = Normalize(context.Request.Path.Value ?? "/");
+                        string query = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : "";
 
-                    _logger.LogInformation("🔁 [Forward] {Method} {From} → {To}",
-                        context.Request.Method,
-                        context.Request.Path + context.Request.QueryString,
-                        targetUrl);
+                        string targetUrl = BuildTargetUrl(dto.TargetPath, sourcePath, targetPath, requestPath, query);
 
-                    // Store resolved target for potential later use
-                    context.Items["ResolvedTargetUrl"] = targetUrl;
-                }
-                else
-                {
-                    _logger.LogWarning("ForwardPreview: Route not found in cache for RouteId={RouteId}", routeInfo.Id);
+                        _logger.LogInformation("🔁 [Forward] {Method} {From} → {To}",
+                            context.Request.Method,
+                            context.Request.Path + context.Request.QueryString,
+                            targetUrl);
+
+                        // Store resolved target for potential later use
+                        context.Items["ResolvedTargetUrl"] = targetUrl;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("ForwardPreview: Route not found in cache for RouteId={RouteId}", routeInfo.Id);
+                    }
                 }
             }
         }

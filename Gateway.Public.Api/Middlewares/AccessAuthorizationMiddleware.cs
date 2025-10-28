@@ -26,12 +26,14 @@ public class AccessAuthorizationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        // Skip auth for Prometheus metrics endpoint
-        if (context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase))
+        // Skip auth for Prometheus metrics and internal endpoint
+        if (InternalRequestHelper.IsInternal(context))
         {
             await _next(context);
             return;
         }
+
+        
 
         // 1️⃣ Ensure JWT authentication
         if (context.User.Identity?.IsAuthenticated != true)

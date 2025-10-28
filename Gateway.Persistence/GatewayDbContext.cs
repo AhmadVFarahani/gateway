@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Gateway.Persistence;
 //dotnet ef migrations add  --startup-project Gateway.Admin.API --project Gateway.Persistence
 //dotnet ef database update --startup-project Gateway.Admin.API --project Gateway.Persistence
+//dotnet ef migrations script --startup-project Gateway.Admin.API --project Gateway.Persistence -o ./Migrations/BankScript.sql
 
 public class GatewayDbContext : DbContext
 {

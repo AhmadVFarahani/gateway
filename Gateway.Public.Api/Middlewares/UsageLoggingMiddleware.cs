@@ -23,6 +23,13 @@ public class UsageLoggingMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        // Skip auth for Prometheus metrics and internal endpoint
+        if (InternalRequestHelper.IsInternal(context))
+        {
+            await _next(context);
+            return;
+        }
+
         // Start measuring request duration
         var stopwatch = Stopwatch.StartNew();
 

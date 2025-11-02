@@ -47,7 +47,11 @@ public class ForwardPreviewLoggingMiddleware
                         string requestPath = Normalize(context.Request.Path.Value ?? "/");
                         string query = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : "";
 
-                        string targetUrl = BuildTargetUrl(dto.TargetPath, sourcePath, targetPath, requestPath, query);
+                        //string targetUrl = BuildTargetUrl(dto.TargetPath, sourcePath, targetPath, requestPath, query);
+                        string relativePath = requestPath.StartsWith(sourcePath, StringComparison.OrdinalIgnoreCase)
+                                        ? requestPath.Substring(sourcePath.Length)
+                                        : requestPath;
+                        string targetUrl = $"{dto.TargetBaseUrl.TrimEnd('/')}/{targetPath.TrimStart('/')}{relativePath}{query}";
 
                         _logger.LogInformation("🔁 [Forward] {Method} {From} → {To}",
                             context.Request.Method,
@@ -55,7 +59,7 @@ public class ForwardPreviewLoggingMiddleware
                             targetUrl);
 
                         // Store resolved target for potential later use
-                        context.Items["ResolvedTargetUrl"] = targetUrl;
+                        //context.Items["ResolvedTargetUrl"] = targetUrl;
                     }
                     else
                     {
